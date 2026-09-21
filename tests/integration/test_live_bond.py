@@ -51,7 +51,9 @@ def test_every_bond_is_refunded_to_the_creator_exactly_once(world):
         assert (r["bond_status"], r["bond_deposited"], r["refunded_amount"]) == ("REFUNDED", "0", str(BOND)), case
     cancelled = live.read("get_recon", world.ids["cancel"])
     assert (cancelled["status"], cancelled["bond_status"]) == ("CANCELLED", "REFUNDED")
-    assert live.record["protocol_after"]["total_bonded"] == "0"
+    # Conservation, not a clean slate: the contract's running total equals the
+    # sum of what every request on it still holds, whatever other runs left.
+    assert live.record["protocol_after"]["total_bonded"] == live.record["bonds_held_by_requests"]
 
 
 def test_the_creator_holds_every_bond_again(world):

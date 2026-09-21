@@ -372,9 +372,12 @@ class World:
             live.record["walls"]["observe_while_pending"] = live.write(
                 live.observer, "observe_recon", self.ids["majority"], step="observe while a result is pending (refused)",
                 request="majority")
+            # The last request observed is the one surely still inside its
+            # finality delay; the first may already be past it.
+            last = CASES[-1]
             live.record["walls"]["finalize_early"] = live.write(
-                live.observer, "finalize_result", self.ids["majority"], step="finalize before the delay (refused)",
-                request="majority")
+                live.observer, "finalize_result", self.ids[last], step="finalize before the delay (refused)",
+                request=last)
         self._once("observe", run)
         return self.ids
 
@@ -447,6 +450,14 @@ class World:
             live.record["creator_balance"] = {"before": str(self.balance_before),
                                               "after": str(live.balance(live.creator.address))}
             live.record["protocol_after"] = live.read("get_protocol_info")
+            held, offset = 0, 0
+            while True:
+                page = live.read("list_recons", offset, 50)
+                held += sum(int(r["bond_deposited"]) for r in page["items"])
+                offset += len(page["items"])
+                if not page["items"] or offset >= int(page["total"]):
+                    break
+            live.record["bonds_held_by_requests"] = str(held)
         self._once("refund", run)
         return self.ids
 

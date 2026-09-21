@@ -438,6 +438,200 @@
       "consensus": "MAJORITY_AGREE",
       "execution": "SUCCESS",
       "refused": false
+    },
+    {
+      "step": "close while the window is open (refused)",
+      "request": "majority",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0xa75dc88951405040f7e83ac6ac5c6af7cfc729c116602d7add8d9350c8def35f",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "ERROR",
+      "refused": true,
+      "refusal": "[EXPECTED] the observation window is open until 1789991696"
+    },
+    {
+      "step": "close_recon [grouped]",
+      "request": "grouped",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0x004ec93648c555aecdfaee487dc63437d647f323bd1d6431b60a1aacceb6a3eb",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [grouped]",
+      "request": "grouped",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0x96cde8fe1765c12539fe2a2914c0a7ad46b49a8c04c5736f5e05771a26d6b8aa",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [majority]",
+      "request": "majority",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0xde31d0569b8397108d316c0bc7c28b45bdb5b5747778b61edc5f842a244a1863",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [majority]",
+      "request": "majority",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0x58638141a22bcd69ec7a23e1351aa8884ddb14c6403893ba5d879457109b15b4",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [strict]",
+      "request": "strict",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0x1ab4a222b7aec795413058d848b5b8367967e8a468d732c832ae5635ae437a82",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [strict]",
+      "request": "strict",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xd1a8d8e068ec92919021b5b756b20bfe2a5961f55cf12f1e15d6cd536c27eaa5",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [derived]",
+      "request": "derived",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0xd4d611dc37a1c9755fd3bb8de1d32ffee6b9eeecf52a4c600c221de11a97ddac",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [derived]",
+      "request": "derived",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0x1c5e478c6854d53260050115b96ff33ccede445fe54f1c765f6d92729081aedb",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [stale]",
+      "request": "stale",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0x0aa81070ff747c61d937abbf1587495aeda1bda4a57280f3c8eed1253af9a782",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [stale]",
+      "request": "stale",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xb72689acbde5338b6fc53bae0473ca4eb887aae0968f74b43b228739369fc2ce",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [authority]",
+      "request": "authority",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0x95f31c19bda409e16bbf7a799156e57b630197302b24968cc8418e5bd4a5b53f",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [authority]",
+      "request": "authority",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xd4ce487fbc0766bc0c6cd453771ee6e5d53c8b680fefec359a4e3e7333f694a9",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "close_recon [injection]",
+      "request": "injection",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0x9f487942fd1bbf75f1e363c0541742e2e00e156c9c7d1cae6d42df2d3a66f8b7",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund_bond [injection]",
+      "request": "injection",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xac9832c0f40383d0acee4be2eef369db3f986bee329eafec5e82e9c47d6cc52b",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "refused": false
+    },
+    {
+      "step": "refund a second time (refused)",
+      "request": "majority",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xd8ac3f102cdfc0b7c06a2a0878a8150c23cc86789e782c55b353f420b7355411",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "ERROR",
+      "refused": true,
+      "refusal": "[EXPECTED] the bond is REFUNDED, not refundable"
     }
   ],
   "requests": {
@@ -920,6 +1114,68 @@
           }
         ],
         "total": 3
+      },
+      "refund_tx": "0x96cde8fe1765c12539fe2a2914c0a7ad46b49a8c04c5736f5e05771a26d6b8aa",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989821,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "2023-10-02",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990916,
+        "latest_result_id": "9-R1",
+        "next_observation_at": 1789991816,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "MAJORITY",
+          "min_groups": 2,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "9",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991732,
+        "result_count": 2,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "OFFICIAL",
+            "label": "PEP 693 release schedule",
+            "origin": "python.org",
+            "source_id": "E2",
+            "url": "https://peps.python.org/pep-0693/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E3",
+            "url": "https://endoflife.date/api/python.json"
+          },
+          {
+            "declared_class": "UNKNOWN",
+            "label": "a release page that does not exist",
+            "origin": "python.org",
+            "source_id": "E4",
+            "url": "https://www.python.org/downloads/release/python-3990/"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991732,
+        "validity_seconds": 120
       }
     },
     "majority": {
@@ -1160,6 +1416,61 @@
         "status": "FINALIZED",
         "updated_at": 1789990564,
         "validity_seconds": 120
+      },
+      "refund_tx": "0x58638141a22bcd69ec7a23e1351aa8884ddb14c6403893ba5d879457109b15b4",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989836,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "2023-10-02",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990017,
+        "latest_result_id": "10-R0",
+        "next_observation_at": 1789990917,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "MAJORITY",
+          "min_groups": 2,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "10",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991756,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          },
+          {
+            "declared_class": "UNKNOWN",
+            "label": "RECON demonstration: conflicting digest",
+            "origin": "github:olawalter",
+            "source_id": "E3",
+            "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991756,
+        "validity_seconds": 120
       }
     },
     "strict": {
@@ -1399,6 +1710,61 @@
         "status": "FINALIZED",
         "updated_at": 1789990580,
         "validity_seconds": 120
+      },
+      "refund_tx": "0xd1a8d8e068ec92919021b5b756b20bfe2a5961f55cf12f1e15d6cd536c27eaa5",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989851,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "UNRESOLVED",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990065,
+        "latest_result_id": "11-R0",
+        "next_observation_at": 1789990965,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "STRICT",
+          "min_groups": 2,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "11",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991781,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          },
+          {
+            "declared_class": "UNKNOWN",
+            "label": "RECON demonstration: conflicting digest",
+            "origin": "github:olawalter",
+            "source_id": "E3",
+            "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991781,
+        "validity_seconds": 120
       }
     },
     "derived": {
@@ -1628,6 +1994,61 @@
         "status": "FINALIZED",
         "updated_at": 1789990599,
         "validity_seconds": 120
+      },
+      "refund_tx": "0x1c5e478c6854d53260050115b96ff33ccede445fe54f1c765f6d92729081aedb",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989866,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "UNRESOLVED",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990098,
+        "latest_result_id": "12-R0",
+        "next_observation_at": 1789990998,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "STRICT",
+          "min_groups": 3,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "12",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991805,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          },
+          {
+            "declared_class": "UNKNOWN",
+            "label": "RECON demonstration: derived digest",
+            "origin": "github:olawalter",
+            "source_id": "E3",
+            "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/derived-report.md"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991805,
+        "validity_seconds": 120
       }
     },
     "stale": {
@@ -1807,6 +2228,54 @@
         ],
         "status": "FINALIZED",
         "updated_at": 1789990613,
+        "validity_seconds": 120
+      },
+      "refund_tx": "0xb72689acbde5338b6fc53bae0473ca4eb887aae0968f74b43b228739369fc2ce",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989881,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "UNRESOLVED",
+        "freshness_requirement": 2592000,
+        "last_observed_at": 1789990146,
+        "latest_result_id": "13-R0",
+        "next_observation_at": 1789991046,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "MAJORITY",
+          "min_groups": 2,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "13",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991836,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991836,
         "validity_seconds": 120
       }
     },
@@ -2007,6 +2476,54 @@
         ],
         "status": "FINALIZED",
         "updated_at": 1789990628,
+        "validity_seconds": 120
+      },
+      "refund_tx": "0xd4ce487fbc0766bc0c6cd453771ee6e5d53c8b680fefec359a4e3e7333f694a9",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989895,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "2023-10-02",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990199,
+        "latest_result_id": "14-R0",
+        "next_observation_at": 1789991099,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "AUTHORITY_CONFIRMATION",
+          "min_confirmations": 1,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "14",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991862,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991862,
         "validity_seconds": 120
       }
     },
@@ -2241,7 +2758,63 @@
         "status": "FINALIZED",
         "updated_at": 1789990642,
         "validity_seconds": 120
-      }
+      },
+      "refund_tx": "0xac9832c0f40383d0acee4be2eef369db3f986bee329eafec5e82e9c47d6cc52b",
+      "closed": {
+        "bond_deposited": "0",
+        "bond_required": "10000000000000000",
+        "bond_status": "REFUNDED",
+        "created_at": 1789989910,
+        "creator": "0x5d4664CaC9369f01a2037eB26403D0E9334B6d23",
+        "current_state": "2023-10-02",
+        "freshness_requirement": 0,
+        "last_observed_at": 1789990224,
+        "latest_result_id": "15-R0",
+        "next_observation_at": 1789991124,
+        "observation_window_end": 1789991696,
+        "observation_window_start": 1789989776,
+        "policy": {
+          "kind": "MAJORITY",
+          "min_groups": 2,
+          "stale_contributes": false
+        },
+        "policy_rules": "RECON-POLICY-1",
+        "question": "On what date was Python 3.12.0 released?",
+        "recon_id": "15",
+        "refunded_amount": "10000000000000000",
+        "refunded_at": 1789991888,
+        "result_count": 1,
+        "result_type": {
+          "kind": "TEMPORAL"
+        },
+        "sources": [
+          {
+            "declared_class": "OFFICIAL",
+            "label": "python.org release page",
+            "origin": "python.org",
+            "source_id": "E1",
+            "url": "https://www.python.org/downloads/release/python-3120/"
+          },
+          {
+            "declared_class": "INDEPENDENT",
+            "label": "endoflife.date",
+            "origin": "endoflife.date",
+            "source_id": "E2",
+            "url": "https://endoflife.date/api/python.json"
+          },
+          {
+            "declared_class": "UNKNOWN",
+            "label": "RECON demonstration: injection attempt",
+            "origin": "github:olawalter",
+            "source_id": "E3",
+            "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/injection-report.md"
+          }
+        ],
+        "status": "CLOSED",
+        "updated_at": 1789991888,
+        "validity_seconds": 120
+      },
+      "injection_source_claim": "NONE"
     }
   },
   "deployment": {
@@ -2435,6 +3008,32 @@
       "execution": "ERROR",
       "refused": true,
       "refusal": "[EXPECTED] the result can be finalized at 1789990317; the transaction time is 1789990267"
+    },
+    "close_while_open": {
+      "step": "close while the window is open (refused)",
+      "request": "majority",
+      "function": "close_recon",
+      "caller": "observer",
+      "tx": "0xa75dc88951405040f7e83ac6ac5c6af7cfc729c116602d7add8d9350c8def35f",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "ERROR",
+      "refused": true,
+      "refusal": "[EXPECTED] the observation window is open until 1789991696"
+    },
+    "refund_twice": {
+      "step": "refund a second time (refused)",
+      "request": "majority",
+      "function": "refund_bond",
+      "caller": "observer",
+      "tx": "0xd8ac3f102cdfc0b7c06a2a0878a8150c23cc86789e782c55b353f420b7355411",
+      "value": 0,
+      "status": "ACCEPTED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "ERROR",
+      "refused": true,
+      "refusal": "[EXPECTED] the bond is REFUNDED, not refundable"
     }
   },
   "returned_deposits": {
@@ -2454,5 +3053,93 @@
     ],
     "total": 2
   },
-  "finished_at": "2026-09-21T11:47:31Z"
+  "finished_at": "2026-09-21T11:59:19Z",
+  "contract_balance": {
+    "before_refunds": "80000000000000000",
+    "after_refunds": "0"
+  },
+  "creator_balance": {
+    "before": "1000000000000000000",
+    "after": "1000000000000000000"
+  },
+  "protocol_after": {
+    "declarable_classes": [
+      "OFFICIAL",
+      "INDEPENDENT",
+      "UNKNOWN"
+    ],
+    "evidence_statuses": [
+      "SUPPORTING",
+      "CONFLICTING",
+      "UNCONTESTED",
+      "NO_CLAIM",
+      "EXCLUDED",
+      "UNAVAILABLE"
+    ],
+    "freshness": [
+      "CURRENT",
+      "STALE",
+      "UNAVAILABLE",
+      "CONFLICTING"
+    ],
+    "limits": {
+      "clock_skew": 300,
+      "finality_delay": 300,
+      "max_bond": "1000000000000000000000000",
+      "max_decimals": 6,
+      "max_freshness": 315360000,
+      "max_label": 80,
+      "max_question": 300,
+      "max_quote": 240,
+      "max_results_per_recon": 100,
+      "max_sources": 6,
+      "max_tolerance_bps": 2000,
+      "max_url": 400,
+      "max_validity": 31622400,
+      "max_values": 8,
+      "max_window": 31622400,
+      "min_bond": "1000000000000000",
+      "min_observation_interval": 900,
+      "min_quote": 12,
+      "min_sources": 2,
+      "min_validity": 60,
+      "min_values": 2,
+      "min_window": 600
+    },
+    "policies": [
+      "MAJORITY",
+      "THRESHOLD",
+      "AUTHORITY_CONFIRMATION",
+      "STRICT"
+    ],
+    "policy_rules": "RECON-POLICY-1",
+    "protocol_version": "RECON-1.0.0",
+    "recon_count": 16,
+    "reconciliation_statuses": [
+      "RESOLVED",
+      "UNRESOLVED_CONFLICT",
+      "UNRESOLVED_INSUFFICIENT"
+    ],
+    "request_statuses": [
+      "SUBMITTED",
+      "PROPOSED",
+      "FINALIZED",
+      "CLOSED",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "result_kinds": [
+      "CATEGORICAL",
+      "BOOLEAN",
+      "NUMERIC",
+      "TEMPORAL"
+    ],
+    "source_classes": [
+      "OFFICIAL",
+      "INDEPENDENT",
+      "DERIVED",
+      "UNKNOWN"
+    ],
+    "total_bonded": "0"
+  }
 }
