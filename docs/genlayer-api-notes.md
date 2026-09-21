@@ -94,6 +94,8 @@ Custom leader/validator (`run_nondet_unsafe`), chosen before the nondeterministi
 | `typescript` | 6.0.3 | 7.0.2 is the native-compiler release: its package exports only `version.cjs`, without the compiler API that Next's type checker and typescript-eslint use; typescript-eslint's peer range is `<6.1.0`. 6.0.3 is the newest release both accept |
 | `tailwindcss` | 4.3.3 | latest stable |
 | `vitest` | 5.0.1 | latest stable |
+| `eslint` | 9.39 | 10.11.0 is the latest, but `eslint-config-next` 16.3.5 bundles an `eslint-plugin-react` that calls `context.getFilename`, which ESLint 10 removed: linting fails with `contextOrFilename.getFilename is not a function` (tried 21 September 2026). 9.39 is the newest ESLint the official Next.js config runs on |
+| `@types/node` | 22.x | matches the Node.js major the app declares and hosts run (`engines.node >= 20.9`); the 26.x types describe APIs those runtimes lack |
 
 genlayer-js 1.1.8 facts used by the app: `createClient({ chain, account, provider })` routes
 `eth_sendTransaction` to the injected wallet's EIP-1193 provider; `readContract`, `writeContract`

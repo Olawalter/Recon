@@ -4,7 +4,7 @@ node read itself, dates freshness, and accepts a derivation only on the
 source's own words."""
 import pytest
 
-from .conftest import (BODY_MONITOR, BODY_NEWS_DOWN, BODY_NEWS_OK, BODY_OFFICIAL, D_MONITOR, D_OFFICIAL, DAY,
+from .conftest import (BODY_MONITOR, BODY_NEWS_DOWN, BODY_NEWS_OK, BODY_OFFICIAL, D_MONITOR, D_OFFICIAL, DAY, WEB_AGREE,
                        OBSERVE, Q_MONITOR, Q_NEWS_DOWN, Q_NEWS_OK, Q_OFFICIAL, SOURCES, URL_MIRROR,
                        URL_MONITOR, URL_NEWS, URL_OFFICIAL, answer, by_source, create, latest, observe, page,
                        record_prompts, src)
@@ -236,3 +236,45 @@ def test_only_readable_sources_are_fenced(direct_vm, deployed, direct_bob, creat
             llm_json=answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E3", "OPERATIONAL", Q_NEWS_OK)))
     assert "<<<SOURCE E2>>>" not in prompts[-1]
     assert '"readable":false' in prompts[-1]
+
+
+def test_a_short_passage_both_pages_carry_is_not_a_copy(direct_vm, deployed, direct_alice, direct_bob):
+    """Two pages sharing a short phrase have not copied each other: a copy must
+    reproduce a passage long enough to be one."""
+    shared = "are fully operational."                                    # on E2's page too, and short
+    body = page(f"<p>Our own probes say the Northwind services {shared}</p>")
+    rid = create(deployed, direct_vm, direct_alice, sources=MIRROR_SOURCES)
+    assert shared.lower() in BODY_MONITOR.decode().lower() and shared in body.decode()     # really on both
+    res = mirror_round(direct_vm, deployed, direct_bob, rid, body, "E2", shared, f"Northwind services {shared}")
+    assert by_source(res)["E4"]["derived_from"] == ""
+
+
+# ─── reading a response ───────────────────────────────────────────────────
+
+def test_a_compressed_page_is_decompressed_before_it_is_read(direct_vm, deployed, direct_bob, created):
+    """Some servers compress whatever the request asks; python.org does."""
+    import gzip
+    web = dict(WEB_AGREE)
+    web[URL_OFFICIAL] = (200, gzip.compress(BODY_OFFICIAL))
+    observe(direct_vm, deployed, direct_bob, created, web=web)
+    e = evidence(deployed, created)
+    assert (e["E1"]["availability"], e["E1"]["claim_value"]) == ("AVAILABLE", "OPERATIONAL")
+
+
+def test_binary_noise_is_unavailable_not_a_page_that_says_nothing(direct_vm, deployed, direct_bob, created):
+    prompts = record_prompts(direct_vm)
+    web = dict(WEB_AGREE)
+    web[URL_OFFICIAL] = (200, bytes(range(256)) * 40)
+    observe(direct_vm, deployed, direct_bob, created, web=web,
+            llm_json=answer(src("E2", "OPERATIONAL", Q_MONITOR), src("E3", "OPERATIONAL", Q_NEWS_OK)))
+    assert evidence(deployed, created)["E1"]["availability"] == "UNAVAILABLE"
+    assert "<<<SOURCE E1>>>" not in prompts[-1]
+
+
+def test_a_compressed_body_that_expands_without_limit_is_unavailable(direct_vm, deployed, direct_bob, created):
+    import gzip
+    web = dict(WEB_AGREE)
+    web[URL_OFFICIAL] = (200, gzip.compress(b"a" * 3_000_000))            # 3 MB from a few KB
+    observe(direct_vm, deployed, direct_bob, created, web=web,
+            llm_json=answer(src("E2", "OPERATIONAL", Q_MONITOR), src("E3", "OPERATIONAL", Q_NEWS_OK)))
+    assert evidence(deployed, created)["E1"]["availability"] == "UNAVAILABLE"

@@ -5,7 +5,7 @@ import pytest
 
 from .conftest import (BODY_MONITOR, BODY_NEWS_DOWN, BODY_NEWS_OK, BODY_OFFICIAL, Q_MONITOR, Q_NEWS_DOWN,
                        Q_NEWS_OK, Q_OFFICIAL, SOURCES, URL_MONITOR, URL_NEWS, URL_OFFICIAL, URL_OFFICIAL_BLOG,
-                       answer, by_source, create, latest, observe, page, src)
+                       URL_MIRROR, answer, by_source, create, latest, observe, page, src)
 
 WEB_SPLIT = {URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MONITOR: (200, BODY_MONITOR), URL_NEWS: (200, BODY_NEWS_DOWN)}
 READ_SPLIT = answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OPERATIONAL", Q_MONITOR),
@@ -225,3 +225,44 @@ def test_a_date_the_quote_does_not_state_is_no_claim(direct_vm, deployed, direct
 def test_the_summary_is_written_by_code_from_the_structured_result(direct_vm, deployed, direct_alice, direct_bob):
     res = run(direct_vm, deployed, direct_alice, direct_bob, {"kind": "MAJORITY", "min_groups": 2})
     assert res["summary"] == "2 of 3 independent source group(s) establish OPERATIONAL under MAJORITY"
+
+
+# ─── the gaps the mutation sweep found ─────────────────────────────────────
+
+FOUR = SOURCES + [{"url": URL_MIRROR, "label": "FeedHub", "declared_class": "INDEPENDENT"}]
+BODY_FEED_DOWN = page("<p>FeedHub: Northwind services are offline across every region.</p>")
+Q_FEED_DOWN = "Northwind services are offline across every region"
+
+
+def test_an_even_split_is_never_a_majority(direct_vm, deployed, direct_alice, direct_bob):
+    """Two publishers against two meets the minimum of two, and is still no
+    majority: half is not more than half, and no tie is broken."""
+    web = {**WEB_SPLIT, URL_NEWS: (200, BODY_NEWS_DOWN), URL_MIRROR: (200, BODY_FEED_DOWN)}
+    read = answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OPERATIONAL", Q_MONITOR),
+                  src("E3", "OFFLINE", Q_NEWS_DOWN), src("E4", "OFFLINE", Q_FEED_DOWN))
+    res = run(direct_vm, deployed, direct_alice, direct_bob, {"kind": "MAJORITY", "min_groups": 2}, web, read,
+              sources=FOUR)
+    assert outcome(res)[:2] == ("UNRESOLVED", "UNRESOLVED_CONFLICT")
+
+
+def test_officials_that_disagree_cannot_be_confirmed(direct_vm, deployed, direct_alice, direct_bob):
+    """Two sources declared official, on different publishers, say different
+    things: the authority itself is in conflict, whatever confirms either."""
+    sources = [SOURCES[0], {"url": URL_MIRROR, "declared_class": "OFFICIAL"}, SOURCES[1], SOURCES[2]]
+    # each official is confirmed by an independent publisher, so neither side lacks confirmation:
+    # only the officials' own disagreement stands between this and a resolved state
+    web = {URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MIRROR: (200, BODY_FEED_DOWN),
+           URL_MONITOR: (200, BODY_MONITOR), URL_NEWS: (200, BODY_NEWS_DOWN)}
+    read = answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OFFLINE", Q_FEED_DOWN),
+                  src("E3", "OPERATIONAL", Q_MONITOR), src("E4", "OFFLINE", Q_NEWS_DOWN))
+    res = run(direct_vm, deployed, direct_alice, direct_bob, AUTHORITY, web, read, sources=sources)
+    assert outcome(res)[:2] == ("UNRESOLVED", "UNRESOLVED_CONFLICT")
+
+
+def test_too_few_voices_is_reported_before_their_disagreement(direct_vm, deployed, direct_alice, direct_bob):
+    """Two publishers disagree under a policy that needs three. Both facts are
+    true; the result names the more basic one: there is not enough evidence."""
+    web = {URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MONITOR: (200, page(f"<p>{Q_FEED_DOWN}.</p>")), URL_NEWS: (503, b"")}
+    read = answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OFFLINE", Q_FEED_DOWN))
+    res = run(direct_vm, deployed, direct_alice, direct_bob, {"kind": "MAJORITY", "min_groups": 3}, web, read)
+    assert (res["reconciliation_status"], res["evidence_sufficient"]) == ("UNRESOLVED_INSUFFICIENT", False)

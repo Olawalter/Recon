@@ -252,3 +252,112 @@ def test_the_recorded_creator_is_always_the_signer(direct_vm, deployed, direct_a
     assert deployed.get_recon(rid)["creator"].lower() == hex_of(direct_bob)
     assert deployed.list_by_creator(hex_of(direct_bob))["total"] == 1
     assert deployed.list_by_creator(hex_of(direct_alice))["total"] == 0
+
+
+# ─── the gaps the mutation sweep found ─────────────────────────────────────
+
+def test_an_omitted_source_is_a_model_error_by_name(direct_vm, deployed, direct_bob, created):
+    with direct_vm.expect_revert("[LLM_ERROR] answer omits readable source E3"):
+        observe(direct_vm, deployed, direct_bob, created,
+                llm_json=answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OPERATIONAL", Q_MONITOR)))
+
+
+def test_answers_about_a_source_this_node_could_not_read_are_ignored_even_twice(direct_vm, deployed, direct_bob,
+                                                                                   created):
+    web = {URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MONITOR: (200, BODY_MONITOR), URL_NEWS: (503, b"")}
+    observe(direct_vm, deployed, direct_bob, created, web=web,
+            llm_json=answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OPERATIONAL", Q_MONITOR),
+                            src("E3", "OFFLINE", Q_NEWS_DOWN), src("E3", "DEGRADED", Q_NEWS_DOWN)))
+    e3 = next(e for e in latest(deployed, created)["evidence"] if e["source_id"] == "E3")
+    assert (e3["availability"], e3["claim_value"]) == ("UNAVAILABLE", "NONE")
+
+
+def test_a_leader_that_failed_is_never_agreed_with(direct_vm, deployed, direct_bob, created):
+    """A leader's model error makes the validators disagree, so the round
+    rotates to a new leader instead of recording anything."""
+    observe(direct_vm, deployed, direct_bob, created)
+    i = round_index(direct_vm)
+    mock_round(direct_vm)                                              # this validator's own run succeeds
+    assert direct_vm.run_validator(index=i, leader_error=Exception("[LLM_ERROR] answer omits readable source E3")) is False
+    mock_round(direct_vm, llm_json=answer(src("E1", "OPERATIONAL", Q_OFFICIAL)))   # and when it fails the same way
+    assert direct_vm.run_validator(index=i, leader_error=Exception("[LLM_ERROR] answer omits readable source E2")) is False
+
+
+# ─── the boundary, against a forged agreed result ──────────────────────────
+
+def forge_round(direct_vm, deployed, monkeypatch, bob, rid, edit):
+    """Run a real round to get an honest result, then make the network return a
+    forged one as if it had been agreed. The boundary must refuse it."""
+    import genlayer.gl.vm as gl_vm
+    real = gl_vm.run_nondet_unsafe
+    captured = {}
+
+    def capture(leader_fn, validator_fn):
+        captured["honest"] = real(leader_fn, validator_fn)
+        forged = copy.deepcopy(captured["honest"])
+        edit(forged)
+        return forged
+
+    monkeypatch.setattr(gl_vm, "run_nondet_unsafe", capture)
+    observe(direct_vm, deployed, bob, rid)
+
+
+@pytest.mark.parametrize("edit,expect", [
+    (lambda r: r.pop("evidence"), "malformed"),
+    (lambda r: r["evidence"].reverse(), "malformed"),
+    (lambda r: r.update(reconciliation_status="SETTLED"), "malformed"),
+    (lambda r: r.update(state="UNRESOLVED"), "malformed"),
+    (lambda r: r.update(evidence_sufficient=False), "malformed"),
+    (lambda r: r.update(supporting_sources=["E9"]), "malformed"),
+    (lambda r: r["evidence"][0].update(availability="UNAVAILABLE"), "malformed"),
+    (lambda r: r["evidence"][0].update(claim=""), "malformed"),
+    (lambda r: r["evidence"][0].update(derived_from="E1"), "malformed"),
+    (lambda r: r.update(state="DEGRADED"), "inconsistent"),
+    (lambda r: r.update(conflicting_sources=["E3"], supporting_sources=["E1", "E2"]), "inconsistent"),
+    (lambda r: r["evidence"][2].update(claim_value="OFFLINE"), "inconsistent"),
+])
+def test_the_boundary_refuses_a_forged_agreed_result(direct_vm, deployed, direct_bob, created, monkeypatch,
+                                                     edit, expect):
+    with direct_vm.expect_revert(f"{expect} reconciliation result"):
+        forge_round(direct_vm, deployed, monkeypatch, direct_bob, created, edit)
+    assert deployed.get_recon(created)["result_count"] == 0
+
+
+def test_the_boundary_accepts_the_honest_result_it_is_given(direct_vm, deployed, direct_bob, created, monkeypatch):
+    forge_round(direct_vm, deployed, monkeypatch, direct_bob, created, lambda r: None)
+    assert deployed.get_recon(created)["result_count"] == 1, "control"
+
+
+WEB_E3_DOWN = {URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MONITOR: (200, BODY_MONITOR), URL_NEWS: (503, b"")}
+READ_E3_DOWN = answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E2", "OPERATIONAL", Q_MONITOR))
+
+
+def forge_unread(direct_vm, deployed, monkeypatch, bob, rid, edit):
+    """Like forge_round, from an honest round in which E3 really was unreachable,
+    so the forged row differs from the truth in exactly one respect."""
+    import genlayer.gl.vm as gl_vm
+    real = gl_vm.run_nondet_unsafe
+
+    def capture(leader_fn, validator_fn):
+        forged = copy.deepcopy(real(leader_fn, validator_fn))
+        edit(forged["evidence"][2])
+        return forged
+
+    monkeypatch.setattr(gl_vm, "run_nondet_unsafe", capture)
+    observe(direct_vm, deployed, bob, rid, web=WEB_E3_DOWN, llm_json=READ_E3_DOWN)
+
+
+@pytest.mark.parametrize("edit", [
+    lambda row: row.update(claim_value="OFFLINE", claim=Q_NEWS_DOWN),         # an unread source that claims
+    lambda row: row.update(derived_from="E1"),                               # or derives
+    lambda row: row.update(freshness="CURRENT"),                              # or is current
+])
+def test_the_boundary_refuses_an_unread_source_that_says_anything(direct_vm, deployed, direct_bob, created,
+                                                                  monkeypatch, edit):
+    with direct_vm.expect_revert("malformed reconciliation result"):
+        forge_unread(direct_vm, deployed, monkeypatch, direct_bob, created, edit)
+
+
+def test_the_honest_unread_round_passes_the_boundary(direct_vm, deployed, direct_bob, created, monkeypatch):
+    forge_unread(direct_vm, deployed, monkeypatch, direct_bob, created, lambda row: None)
+    assert deployed.get_recon(created)["result_count"] == 1, "control"

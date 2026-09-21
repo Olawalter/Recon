@@ -234,8 +234,8 @@ def _sanitize(text, limit: int) -> str:
 
 def _squash(text) -> str:
     s = str(text or "")
-    for a, b in (("’", "'"), ("‘", "'"), ("“", '"'), ("”", '"'),
-                 ("–", "-"), ("—", "-"), (" ", " ")):
+    for a, b in (("\u2019", "'"), ("\u2018", "'"), ("\u201c", '"'), ("\u201d", '"'),
+                 ("\u2013", "-"), ("\u2014", "-"), ("\u00a0", " ")):
         s = s.replace(a, b)
     return re.sub(r"\s+", " ", s).strip().casefold()
 
@@ -445,10 +445,31 @@ def _parse_terms(question_raw, raw: str, now: int) -> dict:
 
 # ─── evidence ──────────────────────────────────────────────────────────────────
 
-def _extract_text(body: bytes) -> str:
-    """What may be read of a response. JSON is compacted in its key order;
-    HTML loses scripts, styles and tags."""
+def _decode_body(body: bytes):
+    """The response as text, or None when it cannot honestly be read.
+
+    Some servers compress a response whatever the request asks for. A gzip
+    body is decompressed, bounded so it cannot expand without limit; if that is
+    impossible, or the body is not text, the source is unreadable. Binary noise
+    is never handed to the panel as a page that happens to say nothing."""
+    if body[:2] == b"\x1f\x8b":
+        try:
+            import zlib
+            d = zlib.decompressobj(31)
+            body = d.decompress(body, MAX_RESPONSE_BYTES)
+            if d.unconsumed_tail:
+                return None
+        except Exception:
+            return None
     text = body.decode("utf-8", "replace")
+    if text.count("\ufffd") > max(8, len(text) // 50):
+        return None
+    return text
+
+
+def _extract_text(text: str) -> str:
+    """What may be read of a decoded response. JSON is compacted in its key
+    order; HTML loses scripts, styles and tags."""
     stripped = text.lstrip()
     if stripped.startswith("{") or stripped.startswith("["):
         try:
@@ -954,6 +975,14 @@ def _well_formed(res, terms: dict) -> bool:
             return False
         if r.get("derived_from") not in ([""] + ids) or r.get("derived_from") == r["source_id"]:
             return False
+        # a source that could not be read claims nothing, is not current, and is not counted
+        unread = r["availability"] != A_AVAILABLE
+        if unread != (r["freshness"] == F_UNAVAILABLE) or unread != (r["evidence_status"] == EV_UNAVAILABLE):
+            return False
+        if unread and (r.get("claim_value") != NONE or r.get("claim") or r.get("derived_from")):
+            return False
+        if (r.get("claim_value") == NONE) != (r.get("claim", "") == ""):
+            return False
     if res.get("reconciliation_status") not in RECONCILIATION_STATUSES:
         return False
     if (res.get("reconciliation_status") == RS_RESOLVED) == (res.get("state") == UNRESOLVED):
@@ -1108,6 +1137,7 @@ class Recon(gl.Contract):
         numeric = rtype["kind"] == K_NUMERIC
         tolerance = rtype.get("tolerance_bps", 0)
         extract, sanitize, build, header, http_date = _extract_text, _sanitize, _build_prompt, _header, _http_date
+        decode = _decode_body
         read, reconcile, fingerprint, quotes_hold = _read_sources, _reconcile, _fingerprint, _quotes_hold
         agree = _numbers_agree
         headers = {"User-Agent": "RECON-GenLayer/1.0",
@@ -1129,7 +1159,8 @@ class Recon(gl.Contract):
                         availability = A_MISSING
                     elif 200 <= code < 300 and isinstance(body, (bytes, bytearray)) \
                             and 0 < len(body) <= MAX_RESPONSE_BYTES:
-                        excerpt = sanitize(extract(bytes(body)), MAX_EXCERPT_CHARS)
+                        decoded = decode(bytes(body))
+                        excerpt = sanitize(extract(decoded), MAX_EXCERPT_CHARS) if decoded is not None else ""
                         if excerpt:
                             availability = A_AVAILABLE
                             readable[s["source_id"]] = excerpt
@@ -1157,7 +1188,8 @@ class Recon(gl.Contract):
                             availability = A_MISSING
                         elif 200 <= code < 300 and isinstance(body, (bytes, bytearray)) \
                                 and 0 < len(body) <= MAX_RESPONSE_BYTES:
-                            excerpt = sanitize(extract(bytes(body)), MAX_EXCERPT_CHARS)
+                            decoded = decode(bytes(body))
+                            excerpt = sanitize(extract(decoded), MAX_EXCERPT_CHARS) if decoded is not None else ""
                             if excerpt:
                                 availability = A_AVAILABLE
                                 readable[s["source_id"]] = excerpt
