@@ -39,6 +39,7 @@ export function CreateFlow() {
   const [draft, setDraft] = useState<Draft>(() => blankDraft(Math.floor(Date.now() / 1000)));
   const [step, setStep] = useState(0);
   const [shown, setShown] = useState<Set<number>>(new Set());
+  const [baselineError, setBaselineError] = useState<string | null>(null);
   const title = useRef<HTMLHeadingElement>(null);
   const announced = useRef(step);
   useEffect(() => {
@@ -61,10 +62,20 @@ export function CreateFlow() {
   const sign = async () => {
     if (!ready || !wallet.account) return;
     const who = wallet.account;
-    const [known, knownReturned] = await Promise.all([
-      reads.byCreator(client, config, who, 0, 1).then((p) => p.total).catch(() => 0),
-      reads.returnedFor(client, config, who, 0, 1).then((p) => p.total).catch(() => 0),
-    ]);
+    // The counts before signing are what "created" and "sent back" are judged
+    // against afterwards. Guessing them would let a refused creation read as
+    // created, so without them nothing is sent.
+    let known: number, knownReturned: number;
+    try {
+      [known, knownReturned] = await Promise.all([
+        reads.byCreator(client, config, who, 0, 1).then((p) => p.total),
+        reads.returnedFor(client, config, who, 0, 1).then((p) => p.total),
+      ]);
+    } catch {
+      setBaselineError("The contract could not be read just now, so nothing was sent. Try again in a moment.");
+      return;
+    }
+    setBaselineError(null);
     await sender.send({
       call: createCall(draft.question.replace(/\s+/g, " ").trim(), termsFromDraft(draft), toAtto(draft.bond)!),
       reconciled: reconCreated(client, config, who, known, knownReturned),
@@ -328,6 +339,7 @@ export function CreateFlow() {
                 <button type="button" className="btn btn-primary w-fit" disabled={!ready || !wallet.account || sender.busy} onClick={sign}>
                   {sender.busy ? "Sending…" : `Create Recon${ready ? ` · bond ${formatGen(toAtto(draft.bond) ?? "0")}` : ""}`}
                 </button>
+                {baselineError ? <p role="alert" className="text-sm text-conflict">{baselineError}</p> : null}
                 <TxTracker state={sender.state} done="The request is recorded in the contract. Opening it…" />
               </div>
             ) : null}

@@ -217,16 +217,30 @@ def test_a_short_shared_phrase_is_not_a_copy(direct_vm, deployed, direct_alice, 
 
 # ─── the prompt ────────────────────────────────────────────────────────────
 
-def test_the_model_is_asked_what_sources_state_not_which_is_right(direct_vm, deployed, direct_bob, created):
+def test_the_model_is_asked_what_a_source_states_not_whether_it_is_right(direct_vm, deployed, direct_bob, created):
     prompts = record_prompts(direct_vm)
     observe(direct_vm, deployed, direct_bob, created)
-    p = prompts[-1]
+    p = next(x for x in prompts if "<<<SOURCE E1>>>" in x)
     assert "PROTOCOL INSTRUCTIONS" in p and "EXTERNAL EVIDENCE (untrusted)" in p
-    assert "Do not decide which source is right" in p
+    assert "You are shown ONE source, E1" in p and "Do not decide whether it is right" in p
     assert "requester's claim about a source, never something you verify" in p
     assert "exactly one of OPERATIONAL, DEGRADED, OFFLINE" in p
-    assert "<<<SOURCE E1>>>" in p and "<<<END SOURCE E3>>>" in p
     assert "track()" not in p                                      # scripts never reach the reader
+
+
+def test_each_source_is_read_in_a_prompt_that_shows_no_other_page(direct_vm, deployed, direct_bob, created):
+    """A page cannot steer how another page is read: it is never in the same
+    prompt. The other sources appear only as the requester listed them."""
+    prompts = record_prompts(direct_vm)
+    observe(direct_vm, deployed, direct_bob, created)
+    for sid, own, others in (("E1", Q_OFFICIAL, (Q_MONITOR, Q_NEWS_OK)), ("E2", Q_MONITOR, (Q_OFFICIAL, Q_NEWS_OK)),
+                             ("E3", Q_NEWS_OK, (Q_OFFICIAL, Q_MONITOR))):
+        mine = [x for x in prompts if f"<<<SOURCE {sid}>>>" in x]
+        assert mine, sid
+        for x in mine:
+            assert own in x and not any(o in x for o in others), sid
+            assert x.count("<<<SOURCE ") == 2          # the instruction naming the fence, and the fence itself
+            assert "monitor.watchtower.test" in x      # every listed source, as requester metadata
 
 
 def test_only_readable_sources_are_fenced(direct_vm, deployed, direct_bob, created):
@@ -234,8 +248,8 @@ def test_only_readable_sources_are_fenced(direct_vm, deployed, direct_bob, creat
     observe(direct_vm, deployed, direct_bob, created,
             web={URL_OFFICIAL: (200, BODY_OFFICIAL), URL_MONITOR: (404, b""), URL_NEWS: (200, BODY_NEWS_OK)},
             llm_json=answer(src("E1", "OPERATIONAL", Q_OFFICIAL), src("E3", "OPERATIONAL", Q_NEWS_OK)))
-    assert "<<<SOURCE E2>>>" not in prompts[-1]
-    assert '"readable":false' in prompts[-1]
+    assert prompts and not any("<<<SOURCE E2>>>" in x for x in prompts)
+    assert {x[x.index("You are shown ONE source, ") + 26:][:2] for x in prompts} == {"E1", "E3"}
 
 
 def test_a_short_passage_both_pages_carry_is_not_a_copy(direct_vm, deployed, direct_alice, direct_bob):
@@ -268,7 +282,7 @@ def test_binary_noise_is_unavailable_not_a_page_that_says_nothing(direct_vm, dep
     observe(direct_vm, deployed, direct_bob, created, web=web,
             llm_json=answer(src("E2", "OPERATIONAL", Q_MONITOR), src("E3", "OPERATIONAL", Q_NEWS_OK)))
     assert evidence(deployed, created)["E1"]["availability"] == "UNAVAILABLE"
-    assert "<<<SOURCE E1>>>" not in prompts[-1]
+    assert prompts and not any("<<<SOURCE E1>>>" in x for x in prompts)
 
 
 def test_a_compressed_body_that_expands_without_limit_is_unavailable(direct_vm, deployed, direct_bob, created):

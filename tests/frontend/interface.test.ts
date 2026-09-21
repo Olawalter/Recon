@@ -7,7 +7,7 @@
 import { describe, expect, it } from "vitest";
 
 import schema from "@/lib/genlayer/recon-schema.json";
-import { PAYABLE_METHODS, REQUIRED_METHODS, checkResult, checkSchema, createCall, verbCall } from "@/lib/genlayer/recon";
+import { PAYABLE_METHODS, REQUIRED_METHODS, checkResult, checkSchema, createCall, observationFor, transactionsFor, verbCall, type ChainTx } from "@/lib/genlayer/recon";
 import fixtures from "./fixtures/live-results.json";
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -74,5 +74,27 @@ describe("answers are checked at the boundary", () => {
     const worse = clone(fixtures.majority.result) as { evidence: { freshness: string }[] };
     worse.evidence[0]!.freshness = "FRESH";
     expect(() => checkResult(worse, "get_result")).toThrow();
+  });
+});
+
+describe("each result shows its own observation's votes", () => {
+  const tx = (hash: string, createdAt: string, status = "FINALIZED", execution = "SUCCESS"): ChainTx => ({
+    hash: hash as `0x${string}`, method: "observe_recon", args: ["7"], status, execution, createdAt,
+    consensus: "MAJORITY_AGREE", votes: {},
+  });
+  const at = (iso: string) => Date.parse(iso) / 1000;
+
+  it("matches by time, so a round that changed nothing cannot shift the next result's transaction", () => {
+    const first = tx("0x1", "2026-09-21T12:00:00Z");
+    const nothing = tx("0x2", "2026-09-21T12:10:00Z", "UNDETERMINED");
+    const second = tx("0x3", "2026-09-21T12:20:00Z");
+    const { observations } = transactionsFor([first, nothing, second], "7");
+    expect(observations.map((t) => t.hash)).toEqual(["0x1", "0x3"]);
+    expect(observationFor([first, nothing, second], at("2026-09-21T12:00:05Z"))?.hash).toBe("0x1");
+    expect(observationFor([first, nothing, second], at("2026-09-21T12:20:04Z"))?.hash).toBe("0x3");
+  });
+
+  it("finds nothing rather than a later transaction", () => {
+    expect(observationFor([tx("0x9", "2026-09-21T13:00:00Z")], at("2026-09-21T12:00:00Z"))).toBeUndefined();
   });
 });

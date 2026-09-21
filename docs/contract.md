@@ -38,11 +38,11 @@ Every refusal is a `gl.vm.UserError` whose message begins `[EXPECTED]` and names
 
 | Field | Rule |
 |---|---|
-| `sources` | 2 to 6 `{url, label?, declared_class?}`. `https` only, no credentials in the address, a dotted host name (so no `localhost`); normalized (case, `www.`, port 443, fragment, trailing slash, `utm_` parameters) and de-duplicated. The contract does not filter private address ranges: sources are fetched by GenLayer's validators, not by any RECON server. `declared_class` is `OFFICIAL`, `INDEPENDENT` or `UNKNOWN`, and is the creator's claim, used only by `AUTHORITY_CONFIRMATION`. |
+| `sources` | 2 to 6 `{url, label?, declared_class?}`. `https` only, no credentials in the address, a dotted host name (so no `localhost`); one spelling per publisher, so a host may not end in or double a dot, must be ASCII (`xn--` form for internationalized names) and may not be an IP address; normalized (case, `www.`, port 443, fragment, trailing slash, `utm_` parameters) and de-duplicated. The contract does not filter private address ranges: sources are fetched by GenLayer's validators, not by any RECON server. `declared_class` is `OFFICIAL`, `INDEPENDENT` or `UNKNOWN`, and is the creator's claim, used only by `AUTHORITY_CONFIRMATION`. |
 | `result_type` | `CATEGORICAL` (2 to 8 capitalized values), `BOOLEAN`, `NUMERIC` (unit, decimals ≤ 6, tolerance ≤ 2000 bps) or `TEMPORAL` (a date) |
 | `policy` | `MAJORITY {min_groups}`, `THRESHOLD {min_groups, threshold_bps}`, `AUTHORITY_CONFIRMATION {min_confirmations}` or `STRICT {min_groups}`; `stale_contributes` optional |
 | `observation_window_start` / `_end` | at least 10 minutes long; may open up to 5 minutes before the creating transaction |
-| `freshness_requirement` | seconds; 0 means age is not a condition |
+| `freshness_requirement` | seconds; 0 means age is not a condition, otherwise at least one day (86,400) |
 | `validity_seconds` | how long a final result stays current |
 
 A request must have at least as many independent origins as its policy needs, or it is refused at
@@ -72,11 +72,14 @@ characters of its text. A model saying "this looks copied" is not enough.
 1. fetches each source with `gl.nondet.web.get`, bounded to 1 MB, decompressing gzip/deflate bodies
    (python.org gzips regardless of `Accept-Encoding`). 404/410 is `MISSING`, anything else that is
    not a readable 2xx is `UNAVAILABLE`; neither is ever a contradiction;
-2. reduces the body to text, keeps up to 5,000 characters around what the question asks, and reads
-   the `Last-Modified` header and the dates the text states;
-3. asks the model, once, with every source fenced as untrusted data, what each source states in the
-   request's answer form, the passage that states it, the date it gives for its information, and
-   whether it says it repeats another listed source;
+2. reduces the body to text (scripts, styles and tags removed), keeps its first 5,000 characters,
+   replaces every run of three or more angle brackets with a space so no page can close or rebuild
+   the evidence fence, and reads the `Last-Modified` header;
+3. asks the model, **in a separate prompt for each readable source**, what that source states in
+   the request's answer form, the passage that states it, the date it gives for its information, and
+   whether it says it repeats another listed source. Each prompt contains only that one page, fenced
+   as untrusted data; the other sources appear only as the requester listed them (host, label), so a
+   page cannot steer how another page is read;
 4. normalizes each claim in code (`_normalize_claim`) and keeps it only if its passage is found in
    that node's own copy of the page, and the value itself is written in that passage
    (`_claim_grounded`). An unsupported claim becomes "no claim".
@@ -86,6 +89,13 @@ derivation, lets each group speak once, and applies the policy. The model is nev
 source is right or what the state is, and never sees the bond.
 
 **Leader.** The leader returns the rows and the reconciliation.
+
+**What is stored.** After consensus, `observe_recon` does not store the leader's result as returned.
+It checks its shape and types (`_well_formed`), rebuilds every row from the fields the validators
+agreed on (availability, claim, passages, dates, freshness, derivation) plus the frozen terms (address,
+publisher, declared class) and the transaction's own time (`_rebuild_rows`), applies the policy again
+in code, and stores that. The summary, validity, observation time and groups are the contract's own;
+a field the leader added is dropped, and a relabelled source class is refused.
 
 **Validators.** Each validator repeats the whole reading itself and compares a fingerprint of the
 decision-bearing fields (`_fingerprint`): every source's availability, claim, freshness and
@@ -116,6 +126,13 @@ day after the observation is `CONFLICTING` in freshness and does not count.
 
 Too few counted groups is `UNRESOLVED_INSUFFICIENT`, reported before any conflict. Enough groups
 that fail the policy is `UNRESOLVED_CONFLICT`. Either way the state is `UNRESOLVED`, never a guess.
+One exception: under `AUTHORITY_CONFIRMATION`, sources declared official that disagree with one
+another are `UNRESOLVED_CONFLICT` whatever else is counted, because the policy has no authority to
+confirm.
+
+Freshness is measured in days, as sources date their information: a source's age is the time from the
+start of the day it gives (or its `Last-Modified` day) to the observation. A requirement is therefore 0
+or at least one day; with one day, only information dated today is current.
 
 ## Lifecycles
 
@@ -129,6 +146,15 @@ bond      LOCKED ──cancel / close──► REFUNDABLE ──refund_bond─�
 
 result    PROPOSED ──300 s──► FINALIZED        immutable; expiry is a new EXPIRED transition, not an edit
 ```
+
+Paths the diagram does not draw, all deliberate:
+
+- `finalize_result` works after the window has ended, so a result proposed near the end can always
+  become final, and the request can then close and refund. A bond can never be stuck.
+- `expire_result` works on a `CLOSED` request, even after its refund: expiry records that the last
+  state is no longer current, which stays true after the bond is returned.
+- `cancel_recon` works on a request that was never observed even after its window has ended, and ends
+  it `CANCELLED` rather than `FAILED`. Either way the bond becomes refundable.
 
 ## Limits
 

@@ -42,6 +42,13 @@ MUTANTS = [
     ("window may be too short", "if end - start < MIN_WINDOW:", "if False:"),
     ("validity unbounded", "if not MIN_VALIDITY <= validity <= MAX_VALIDITY:", "if False:"),
 
+    ("a trailing-dot host is a second publisher", 'if host.endswith(".") or ".." in host or host.startswith("."):', "if False:"),
+    ("a non-ASCII host is a second publisher", "if not host.isascii():", "if False:"),
+    ("an IP host is a second publisher", 'if re.fullmatch(r"[0-9.]+", host) or host.startswith("["):', "if False:"),
+    ("freshness under a day accepted", "if fresh != 0 and not DAY <= fresh <= MAX_FRESHNESS:",
+     "if fresh != 0 and not MINUTE <= fresh <= MAX_FRESHNESS:"),
+    ("a fence is deleted, not replaced", 'ANGLE_RUN.sub(" ", str(text or ""))', 'ANGLE_RUN.sub("", str(text or ""))'),
+
     # ── evidence ──
     ("an invalid category is accepted", 'if v not in result_type["values"]:', "if False:"),
     ("a non-number is accepted", "if not d.is_finite():", "if False:"),
@@ -57,9 +64,9 @@ MUTANTS = [
     ("a short passage is a copy", "copies = len(d_quote) >= MIN_COPY and target", "copies = target"),
     ("a source derives from itself", "if target in ids and target != sid and _grounded(d_quote, text):",
      "if target in ids and _grounded(d_quote, text):"),
-    ("an omitted source is tolerated", 'if sid not in answers:\n                raise', 'if False:\n                raise'),
-    ("a source may be answered twice", "if sid in answers:\n                raise", "if False:\n                raise"),
-    ("an unread source may be answered", "if sid not in readable:\n                continue", "if False:\n                continue"),
+    ("an omitted source is tolerated", 'if not found:\n            raise', 'if False:\n            raise'),
+    ("a source may be answered twice", "if len(found) > 1:", "if False:"),
+    ("an answer about another source is taken", 'if str(item.get("source_id", "")).strip().upper() == sid:', "if True:"),
     ("a future date is current", "if dated and _day_start(dated) > _day_start(observed_day) + FUTURE_TOLERANCE:",
      "if False:"),
     ("an undated source is current", "elif not dated:\n                row[\"freshness\"] = F_STALE",
@@ -147,6 +154,17 @@ MUTANTS = [
      "if False:"),
     ("the boundary accepts any state", "_fingerprint(res, terms[\"result_type\"][\"kind\"] == K_NUMERIC):\n            _fail(\"inconsistent",
      "_fingerprint(res, terms[\"result_type\"][\"kind\"] == K_NUMERIC) and False:\n            _fail(\"inconsistent"),
+    ("the leader's summary and times are stored", "record[key] = rederived[key]", "record[key] = res[key]"),
+    ("a leader's extra row fields are kept", "row = {k: e[k] for k in AGREED_ROW_FIELDS}", "row = dict(e)"),
+    ("a leader's source address is kept", 'row.update({"source_id": s["source_id"], "source_url": s["url"]',
+     'row.update({"source_id": s["source_id"], "source_url": e["source_url"]'),
+    ("a leader's source class is trusted", '"source_class": C_DERIVED if e["derived_from"] else s["declared_class"]',
+     '"source_class": e["source_class"]'),
+    ("the boundary accepts ill-typed fields", "if not isinstance(r.get(k), str) or len(r[k]) > MAX_QUOTE:", "if False:"),
+    ("the boundary accepts any date text", r'if r[k] and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", r[k]):', "if False:"),
+    ("the boundary accepts any claim value",
+     'if _normalize_claim(r["claim_value"], terms["result_type"]) != r["claim_value"]:', "if False:"),
+    ("the boundary accepts a non-row", "not all(isinstance(r, dict) for r in rows)", "False"),
 ]
 
 # Guards that no public call can reach, kept as defence in depth. Removing one

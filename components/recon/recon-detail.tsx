@@ -13,7 +13,7 @@ import { Pane } from "@/components/ui/pane";
 import { configResult } from "@/lib/genlayer/config";
 import { pastValidity } from "@/lib/genlayer/acts";
 import { useChainTxs, useNow, useReconView } from "@/lib/genlayer/hooks";
-import { isMissing, transactionsFor } from "@/lib/genlayer/recon";
+import { isMissing, observationFor, transactionsFor } from "@/lib/genlayer/recon";
 import { POLICY, RESULT_KIND, SOURCE_CLASS, describePolicy, duration, formatTime, reconLabel, resultLabel,
   stateWords } from "@/lib/formatting/present";
 import { hostLabel } from "@/components/conflict-graph/conflict-graph";
@@ -52,7 +52,7 @@ export function ReconDetail({ id }: { id: string }) {
   const rt = recon.result_type;
   const txs = chain.data ? transactionsFor(chain.data, recon.recon_id) : undefined;
   const lookup = chain.error ? "failed" : !chain.data ? "loading" : "found";
-  const observeTx = latest && txs ? txs.observations[latest.sequence] : undefined;
+  const observeTx = latest && txs ? observationFor(txs.observations, latest.proposed_at) : undefined;
   const explorer = configResult.ok ? configResult.config.explorer : "";
   const expiredUnrecorded = pastValidity(recon, latest, now);
 

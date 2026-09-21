@@ -112,3 +112,35 @@ describe("before any signature", () => {
     expect(preflight(connected, 61999, { ok: true, version: "RECON-1.0.0" })).toBeNull();
   });
 });
+
+describe("one spelling per publisher, and freshness by the day, as the contract requires", () => {
+  const withSecond = (url: string): Draft => {
+    const d = good();
+    d.sources = [d.sources[0]!, { url, label: "", declared_class: "INDEPENDENT" }];
+    return d;
+  };
+
+  it.each([
+    ["https://monitor.watchtower.test./nw", /trailing or doubled dot/],
+    ["https://monitor..watchtower.test/nw", /trailing or doubled dot/],
+    ["https://mönitor.watchtower.test/nw", /xn-- form/],
+    ["https://93.184.216.34/nw", /not an IP address/],
+  ])("refuses %s", (url, words) => {
+    expect(validateDraft(withSecond(url), NOW)["sources.1.url"]).toMatch(words);
+  });
+
+  it("accepts the ordinary spelling", () => {
+    expect(validateDraft(withSecond("https://monitor.watchtower.test/nw"), NOW)["sources.1.url"]).toBeUndefined();
+  });
+
+  it("refuses a requirement under a day and accepts one day", () => {
+    expect(validateDraft({ ...good(), freshnessDays: "0.5" }, NOW).freshness).toMatch(/At least one day/);
+    expect(validateDraft({ ...good(), freshnessDays: "1" }, NOW).freshness).toBeUndefined();
+  });
+
+  it("refuses a label that could rebuild a fence", () => {
+    const d = good();
+    d.sources[0]!.label = "status <<>>> x";
+    expect(validateDraft(d, NOW)["sources.0.label"]).toMatch(/three angle brackets/);
+  });
+});

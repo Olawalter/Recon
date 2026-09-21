@@ -176,3 +176,30 @@ def test_a_window_may_open_immediately_or_later(direct_vm, deployed, direct_alic
     later_rid = create(deployed, direct_vm, direct_alice, start=T0 + DAY, end=T0 + 2 * DAY)
     assert deployed.get_recon(now_rid)["observation_window_start"] == T0
     assert deployed.get_recon(later_rid)["observation_window_start"] == T0 + DAY
+
+
+# ─── one spelling per publisher ─────────────────────────────────────────────
+
+@pytest.mark.parametrize("url,words", [
+    ("https://monitor.watchtower.test./northwind", "trailing or doubled dot"),
+    ("https://monitor..watchtower.test/northwind", "trailing or doubled dot"),
+    ("https://m\u00f6nitor.watchtower.test/northwind", "xn-- form"),
+    ("https://93.184.216.34/northwind", "not an IP address"),
+    ("https://[2001:db8::1]/northwind", "not a valid address"),
+])
+def test_a_second_spelling_of_a_host_is_refused(direct_vm, deployed, direct_alice, url, words):
+    """Otherwise one publisher could be listed as two independent voices."""
+    rid = create(deployed, direct_vm, direct_alice, sources=[SOURCES[0], {"url": url}, SOURCES[2]])
+    assert rid == ""
+    assert words in deployed.returned_for(hex_of(direct_alice), 0, 5)["items"][0]["reason"]
+
+
+@pytest.mark.parametrize("seconds", [60, 3600, 86399])
+def test_a_freshness_requirement_under_a_day_is_refused(direct_vm, deployed, direct_alice, seconds):
+    """Sources date their information to the day: a shorter requirement could never be met."""
+    assert create(deployed, direct_vm, direct_alice, freshness=seconds) == ""
+    assert "between 1 and" in deployed.returned_for(hex_of(direct_alice), 0, 5)["items"][0]["reason"]
+
+
+def test_a_freshness_requirement_of_one_day_is_accepted(direct_vm, deployed, direct_alice):
+    assert create(deployed, direct_vm, direct_alice, freshness=86400) == "1", "control"

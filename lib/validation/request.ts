@@ -30,7 +30,7 @@ export const LIMITS = {
 
 const TOKEN = /^[A-Z][A-Z0-9_]{0,31}$/;
 const RESERVED = ["UNRESOLVED", "EXPIRED", "NONE"];
-const FENCE = /<<<|>>>/;
+const ANGLE_RUN = /[<>]{3,}/;
 
 export type DraftSource = { url: string; label: string; declared_class: "OFFICIAL" | "INDEPENDENT" | "UNKNOWN" };
 
@@ -167,7 +167,7 @@ function line(value: string, limit: number, what: string, required = true): stri
   const s = value.replace(/\s+/g, " ").trim();
   if (required && !s) return `${what} is required.`;
   if (s.length > limit) return `${what} is longer than ${limit} characters.`;
-  if (FENCE.test(s)) return `${what} cannot contain <<< or >>>.`;
+  if (ANGLE_RUN.test(s)) return `${what} cannot contain three angle brackets in a row.`;
   return null;
 }
 
@@ -190,6 +190,10 @@ export function validateDraft(d: Draft, now: number): Problems {
       const host = hostOf(url);
       const netloc = url.split("://", 2)[1]!.split("/", 1)[0]!;
       if (netloc.includes("@") || !host || !host.includes(".") || /\s/.test(url)) p[key] = "This is not a valid address.";
+      // one spelling per publisher, as the contract requires
+      else if (host.endsWith(".") || host.includes("..") || host.startsWith(".")) p[key] = "Remove the trailing or doubled dot from the host.";
+      else if (/[^\x00-\x7f]/.test(host)) p[key] = "Give an internationalized host in its xn-- form.";
+      else if (/^[0-9.]+$/.test(host)) p[key] = "Name a host, not an IP address.";
       else if (seen.has(normalizeUrl(url))) p[key] = "This repeats an earlier source.";
       else seen.add(normalizeUrl(url));
     }
@@ -249,8 +253,8 @@ export function validateDraft(d: Draft, now: number): Problems {
   const fresh = Number(d.freshnessDays);
   if (!/^\d+(\.\d+)?$/.test(d.freshnessDays.trim()) || fresh > LIMITS.maxFreshnessDays) {
     p.freshness = `0 for any age, or up to ${LIMITS.maxFreshnessDays} days.`;
-  } else if (fresh > 0 && fresh * 86400 < 60) {
-    p.freshness = "At least one minute, or 0 for any age.";
+  } else if (fresh > 0 && fresh < 1) {
+    p.freshness = "At least one day, or 0 for any age: sources date their information to the day.";
   }
   const validity = Number(d.validityHours) * 3600;
   if (!/^\d+(\.\d+)?$/.test(d.validityHours.trim()) || validity < LIMITS.minValiditySeconds || validity > LIMITS.maxValidityDays * 86400) {

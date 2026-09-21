@@ -428,15 +428,28 @@ export async function contractTransactions(cfg: AppConfig): Promise<ChainTx[]> {
 }
 
 /** The transactions behind a request: the k-th successful observation is result R(k). */
+/** A write took effect only when its leader succeeded and GenLayer accepted
+ * it; an undetermined, cancelled or overturned round changed nothing. */
+const TOOK_EFFECT = ["ACCEPTED", "READY_TO_FINALIZE", "FINALIZED"];
+const effective = (t: ChainTx) => t.execution === "SUCCESS" && TOOK_EFFECT.includes(t.status);
+
 export function transactionsFor(all: ChainTx[], reconId: string) {
   const mine = all
     .filter((t) => t.args[0] !== undefined && String(t.args[0]) === reconId && t.method !== "create_recon")
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  const ok = (t: ChainTx) => t.execution === "SUCCESS";
   return {
-    observations: mine.filter((t) => t.method === "observe_recon" && ok(t)),
-    finalizations: mine.filter((t) => t.method === "finalize_result" && ok(t)),
-    refund: mine.find((t) => t.method === "refund_bond" && ok(t)),
+    observations: mine.filter((t) => t.method === "observe_recon" && effective(t)),
+    finalizations: mine.filter((t) => t.method === "finalize_result" && effective(t)),
+    refund: mine.find((t) => t.method === "refund_bond" && effective(t)),
     all: mine,
   };
+}
+
+/** The observation transaction that recorded a result: the last one that took
+ * effect and was sent no later than the result's own time (with two minutes'
+ * slack for clock differences). Matched by time, never by position, so a round
+ * that changed nothing cannot shift another round's votes onto this result. */
+export function observationFor(observations: ChainTx[], proposedAt: number): ChainTx | undefined {
+  const sent = (t: ChainTx) => Date.parse(t.createdAt) / 1000;
+  return observations.filter((t) => effective(t) && Number.isFinite(sent(t)) && sent(t) <= proposedAt + 120).at(-1);
 }
