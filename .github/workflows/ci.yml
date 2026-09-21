@@ -1,0 +1,89 @@
+# Two required jobs on every push and pull request: the contract (GenVM linter and direct-mode
+# tests) and the app (typecheck, lint, tests, production build). The live StudioNet suite takes
+# about forty minutes of real consensus rounds on a shared public network, so it runs only when
+# started by hand and never blocks anything.
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      integration:
+        description: "Also run the live StudioNet suite (~40 min)"
+        type: boolean
+        default: false
+
+env:
+  PYTHONUTF8: "1"
+  # genvm-lint picks the newest cached GenVM bundle; this contract's runner lives in v0.3.0-rc7.
+  GENVM_VERSION: v0.3.0-rc7
+
+jobs:
+  contract:
+    name: contract - genvm-lint and direct tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/genvm-linter
+            ~/.cache/gltest-direct
+          key: genvm-${{ env.GENVM_VERSION }}
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      # On a cold cache gltest asks for the runner bundle under a name the v0.3.0-rc line no
+      # longer publishes, so every direct test errors at import while the linter still passes.
+      - run: python scripts/fetch_genvm_bundle.py
+      - run: genvm-lint check contracts/recon.py --json
+      - run: python -m pytest tests/direct -v
+
+  app:
+    name: app - typecheck, lint, tests, build
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_GENLAYER_NETWORK: studionet
+      NEXT_PUBLIC_GENLAYER_CHAIN: "61999"
+      NEXT_PUBLIC_RECON_CONTRACT: "0x895c056714414425F308dA6f65fBE4d4eCb8e775"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  integration:
+    name: integration on StudioNet (manual, non-blocking)
+    if: github.event_name == 'workflow_dispatch' && inputs.integration
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 75
+    env:
+      SKIP_INTEGRATION: "0"
+      # the deployment of record, and the commit that pins the demonstration pages
+      RECON_CONTRACT: "0x895c056714414425F308dA6f65fBE4d4eCb8e775"
+      RECON_DEMO_COMMIT: c44d984cbe65b408b4a6866f7058447ba9634865
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest tests/integration -v -s
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-e2e
+          path: docs/live-e2e.json
+          if-no-files-found: ignore

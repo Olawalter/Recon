@@ -62,7 +62,8 @@ export function ActsPanel({ recon, latest, onChanged }: { recon: Recon; latest?:
       )}
       {!wallet.account && available.length ? <p className="text-xs text-muted">Connect a wallet to send a transaction.</p> : null}
 
-      {active ? <TxTracker state={sender.state} done={`${active.label}: recorded in the contract.`} /> : null}
+      {active ? <TxTracker state={sender.state} done={`${active.label}: recorded in the contract.`}
+                             leader={active.method === "observe_recon" ? "A leader is fetching every source and proposing a result." : undefined} /> : null}
 
       {waiting.length ? (
         <details className="text-sm">

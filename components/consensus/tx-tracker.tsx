@@ -22,13 +22,15 @@ const WAITING: Record<Step, string> = {
   WALLET_CONFIRMATION: "Confirm the transaction in your wallet.",
   SUBMITTED: "Waiting for GenLayer to receive it.",
   PENDING: "Waiting for GenLayer to schedule it.",
-  LEADER_PROPOSED: "A leader is fetching the sources and proposing a result.",
+  LEADER_PROPOSED: "A leader is executing it and proposing the outcome.",
   VALIDATING: "Validators are repeating the work themselves and voting.",
   CONSENSUS: "Accepted; checking that the contract's own state shows it.",
   FINALIZED: "Recorded. It becomes final when GenLayer's appeal window closes.",
 };
 
-export function TxTracker({ state, done }: { state: TxState; done?: string }) {
+/** `leader` replaces the leader step's generic words where the act says more:
+ * only an observation fetches sources. */
+export function TxTracker({ state, done, leader }: { state: TxState; done?: string; leader?: string }) {
   if (state.phase === "READY") return null;
   const explorer = configResult.ok ? configResult.config.explorer : "";
   return (
@@ -47,7 +49,7 @@ export function TxTracker({ state, done }: { state: TxState; done?: string }) {
                   ? ", in progress" : s === "failed" ? ", failed" : ", not yet"}
               </span>
               {s === "passed" ? <span className="ml-2 text-xs text-muted" aria-hidden="true">passed between reads</span> : null}
-              {s === "current" ? <span className="block text-xs text-muted">{WAITING[step]}</span> : null}
+              {s === "current" ? <span className="block text-xs text-muted">{step === "LEADER_PROPOSED" && leader ? leader : WAITING[step]}</span> : null}
             </span>
           </li>
         ))}

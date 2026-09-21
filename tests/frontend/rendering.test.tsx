@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 
 import { BondPanel } from "@/components/bond/bond-panel";
 import { ConflictGraph, ConflictList } from "@/components/conflict-graph/conflict-graph";
+import { LifecyclePanel } from "@/components/consensus/lifecycle-panel";
 import { EvidenceMap } from "@/components/evidence/evidence-map";
 import { StateHistory } from "@/components/recon/state-history";
 import { bucketOf } from "@/components/recon/dashboard";
@@ -128,5 +129,34 @@ describe("what can be done, and what is current", () => {
     expect(bucketOf({ ...base, status: "FINALIZED", current_state: "2023-10-02" })).toBe("finalized");
     expect(bucketOf({ ...base, status: "FINALIZED", current_state: "UNRESOLVED" })).toBe("unresolved");
     expect(bucketOf({ ...base, status: "CLOSED", current_state: "EXPIRED" })).toBe("expired");
+  });
+});
+
+describe("the GenLayer lifecycle", () => {
+  const stage = (html: string, name: string) => {
+    const t = text(html);
+    const i = t.indexOf(name);
+    return t.slice(i, i + name.length + 12);
+  };
+
+  it("never shows consensus reached while its proposal and vote read as not yet", () => {
+    const html = renderToStaticMarkup(<LifecyclePanel recon={recon} result={majority} txLookup="loading" />);
+    expect(stage(html, "Consensus")).toContain(", done");
+    expect(stage(html, "Leader proposed")).toContain(", done");
+    expect(stage(html, "Validating")).toContain(", done");
+    expect(text(html)).toContain("is still being read");
+    expect(stage(html, "Finality")).toContain(", not yet");
+  });
+
+  it("shows the votes the transaction recorded once it is read", () => {
+    const tx: ChainTx = { hash: "0xabc", method: "observe_recon", args: [recon.recon_id], status: "FINALIZED", execution: "SUCCESS",
+                          createdAt: "", consensus: "MAJORITY_AGREE", votes: { agree: 3, idle: 2 } };
+    const html = text(renderToStaticMarkup(<LifecyclePanel recon={recon} result={majority} tx={tx} txLookup="found" />));
+    expect(html).toContain("3 agree, 2 idle");
+  });
+
+  it("claims nothing before an observation", () => {
+    const html = renderToStaticMarkup(<LifecyclePanel recon={recon} txLookup="found" />);
+    for (const s of ["Observing", "Leader proposed", "Validating", "Consensus", "Finality"]) expect(stage(html, s)).toContain(", not yet");
   });
 });

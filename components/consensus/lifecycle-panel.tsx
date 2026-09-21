@@ -19,6 +19,9 @@ export function LifecyclePanel({ recon, result, tx, txLookup }: {
 }) {
   const explorer = configResult.ok ? configResult.config.explorer : "";
   const accepted = !!tx && ["ACCEPTED", "FINALIZED", "READY_TO_FINALIZE"].includes(tx.status);
+  // A result in contract state exists only because a round was accepted, so a
+  // proposal and a vote happened even before the transaction's record is read.
+  const implied = !accepted && !!result;
   const votes = tx ? Object.entries(tx.votes).map(([v, n]) => `${n} ${v}`).join(", ") : "";
 
   const lines: Line[] = [
@@ -30,14 +33,18 @@ export function LifecyclePanel({ recon, result, tx, txLookup }: {
     },
     {
       stage: "Leader proposed",
-      done: accepted,
+      done: accepted || implied,
       evidence: accepted ? "A leader proposed a result; the transaction was later accepted, which requires it."
-        : result && txLookup !== "found" ? "The observation transaction could not be located to show this." : "Not yet.",
+        : implied ? "The contract holds the result, which requires a leader's proposal. The observation transaction's own record "
+          + (txLookup === "loading" || txLookup === "found" ? "is still being read." : "could not be located to show more.")
+        : "Not yet.",
     },
     {
       stage: "Validating",
-      done: accepted,
-      evidence: accepted ? `Validators repeated the work and voted: ${votes || "votes not listed"}.` : "Not yet.",
+      done: accepted || implied,
+      evidence: accepted ? `Validators repeated the work and voted: ${votes || "votes not listed"}.`
+        : implied ? "The contract holds the result, which requires the validators' agreement; their votes appear once the transaction is read."
+        : "Not yet.",
     },
     {
       stage: "Consensus",

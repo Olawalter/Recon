@@ -1,0 +1,199 @@
+{
+  "what": "One reconciliation request taken through its whole lifecycle in the RECON app itself: the app's own create form, EIP-6963 wallet discovery and transaction code, signed by the test wallet in tests/e2e/test-wallet.js holding throwaway, faucet-funded keys. Every field below is read back from StudioNet by scripts/record_app_e2e.py.",
+  "recorded_at": "2026-09-21T12:21:42Z",
+  "network": "GenLayer StudioNet",
+  "chain_id": 61999,
+  "contract": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+  "recon_id": "17",
+  "question": "On what date was Python 3.12.0 released?",
+  "creator": "0x75eF8923EDBB6470bEd349cDd5DAFFe9F61121E8",
+  "transactions": [
+    {
+      "tx": "0x2a3da2336a87f3bd6dd93ab166925e31489478599698627b7684311658a89aee",
+      "from": "0x75eF8923EDBB6470bEd349cDd5DAFFe9F61121E8",
+      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "method": "create_recon",
+      "args": [
+        "On what date was Python 3.12.0 released?",
+        {
+          "sources": [
+            {
+              "url": "https://www.python.org/downloads/release/python-3120/",
+              "label": "python.org release page",
+              "declared_class": "OFFICIAL"
+            },
+            {
+              "url": "https://endoflife.date/api/python.json",
+              "label": "endoflife.date",
+              "declared_class": "INDEPENDENT"
+            },
+            {
+              "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md",
+              "label": "RECON demonstration: conflicting digest",
+              "declared_class": "UNKNOWN"
+            }
+          ],
+          "result_type": {
+            "kind": "TEMPORAL"
+          },
+          "policy": {
+            "kind": "MAJORITY",
+            "min_groups": 2,
+            "stale_contributes": false
+          },
+          "observation_window_start": 1789992060,
+          "observation_window_end": 1789993080,
+          "freshness_requirement": 0,
+          "validity_seconds": 86400
+        },
+        "20000000000000000"
+      ],
+      "value_atto": "20000000000000000",
+      "status": "FINALIZED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "votes": {
+        "agree": 3,
+        "idle": 2
+      },
+      "created_at": "2026-09-21T12:03:09.984148+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x2a3da2336a87f3bd6dd93ab166925e31489478599698627b7684311658a89aee"
+    },
+    {
+      "tx": "0x834944a6341399270b23a55234d40882629ad01d4ab46285c3890e53118aaec5",
+      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
+      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "method": "observe_recon",
+      "args": [
+        "17"
+      ],
+      "value_atto": "0",
+      "status": "FINALIZED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "votes": {
+        "agree": 3,
+        "idle": 2
+      },
+      "created_at": "2026-09-21T12:04:20.521887+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x834944a6341399270b23a55234d40882629ad01d4ab46285c3890e53118aaec5"
+    },
+    {
+      "tx": "0xfec5f4ee1e342d813688892e4a7faf490ec72d00f5cef2f4a7c3fd47fc7c978c",
+      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
+      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "method": "finalize_result",
+      "args": [
+        "17"
+      ],
+      "value_atto": "0",
+      "status": "FINALIZED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "votes": {
+        "agree": 3,
+        "idle": 2
+      },
+      "created_at": "2026-09-21T12:10:06.687231+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0xfec5f4ee1e342d813688892e4a7faf490ec72d00f5cef2f4a7c3fd47fc7c978c"
+    },
+    {
+      "tx": "0x9a17b558bb9729f5296e4216516f27d6a9307f12cc127fe1a4cc6cc9e93f7d5d",
+      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
+      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "method": "close_recon",
+      "args": [
+        "17"
+      ],
+      "value_atto": "0",
+      "status": "FINALIZED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "votes": {
+        "agree": 3,
+        "idle": 2
+      },
+      "created_at": "2026-09-21T12:18:34.104708+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x9a17b558bb9729f5296e4216516f27d6a9307f12cc127fe1a4cc6cc9e93f7d5d"
+    },
+    {
+      "tx": "0xd817b1590b6766ef80d24c329b82ded98148ff2e9c258266c4f55e7cc223c745",
+      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
+      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "method": "refund_bond",
+      "args": [
+        "17"
+      ],
+      "value_atto": "0",
+      "status": "FINALIZED",
+      "consensus": "MAJORITY_AGREE",
+      "execution": "SUCCESS",
+      "votes": {
+        "agree": 3,
+        "idle": 2
+      },
+      "created_at": "2026-09-21T12:19:37.663585+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0xd817b1590b6766ef80d24c329b82ded98148ff2e9c258266c4f55e7cc223c745"
+    }
+  ],
+  "outcome": {
+    "status": "CLOSED",
+    "current_state": "2023-10-02",
+    "bond_required_atto": "20000000000000000",
+    "bond_deposited_atto": "0",
+    "bond_status": "REFUNDED",
+    "refunded_atto": "20000000000000000",
+    "results": [
+      {
+        "result_id": "17-R0",
+        "status": "FINALIZED",
+        "reconciliation_status": "RESOLVED",
+        "state": "2023-10-02",
+        "summary": "2 of 3 independent source group(s) establish 2023-10-02 under MAJORITY",
+        "evidence": [
+          {
+            "source_id": "E1",
+            "origin": "python.org",
+            "evidence_status": "SUPPORTING",
+            "availability": "AVAILABLE",
+            "claim": "Release date: Oct. 2, 2023 This is the stable release of Python 3.12.0",
+            "freshness": "CURRENT",
+            "derived_from": ""
+          },
+          {
+            "source_id": "E2",
+            "origin": "endoflife.date",
+            "evidence_status": "SUPPORTING",
+            "availability": "AVAILABLE",
+            "claim": "\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\",\"eol\":\"2028-10-31\"",
+            "freshness": "CURRENT",
+            "derived_from": ""
+          },
+          {
+            "source_id": "E3",
+            "origin": "github:olawalter",
+            "evidence_status": "CONFLICTING",
+            "availability": "AVAILABLE",
+            "claim": "Python 3.12.0 was released on 3 October 2023, according to this digest.",
+            "freshness": "CURRENT",
+            "derived_from": ""
+          }
+        ]
+      }
+    ],
+    "history": {
+      "items": [
+        {
+          "finalized_at": 1789992606,
+          "kind": "OBSERVED",
+          "new_state": "2023-10-02",
+          "previous_state": "",
+          "recon_id": "17",
+          "result_id": "17-R0"
+        }
+      ],
+      "total": 1
+    }
+  },
+  "problems": []
+}

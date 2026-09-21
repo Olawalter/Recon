@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { BondPanel } from "@/components/bond/bond-panel";
 import { ConflictGraph } from "@/components/conflict-graph/conflict-graph";
 import { LifecyclePanel } from "@/components/consensus/lifecycle-panel";
@@ -25,6 +27,13 @@ export function ReconDetail({ id }: { id: string }) {
   const view = useReconView(id, 15_000);
   const chain = useChainTxs(30_000);
   const now = useNow(15_000);
+  // Re-read the transaction listing the moment the request changes, rather
+  // than leaving the lifecycle and transaction panes a poll behind the state.
+  const changeKey = view.data ? `${view.data.recon.result_count}|${view.data.recon.status}|${view.data.recon.bond_status}` : "";
+  const reloadChain = chain.reload;
+  useEffect(() => {
+    if (changeKey) reloadChain();
+  }, [changeKey, reloadChain]);
 
   if (view.error && isMissing(view.error)) {
     return <Notice title={`${reconLabel(id)} does not exist`}>No request with this number has been created on this contract.</Notice>;
