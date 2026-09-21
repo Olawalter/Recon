@@ -1,0 +1,11 @@
+[project]
+name = "recon"
+version = "1.0.0"
+description = "Decentralized reconciliation of conflicting information under GenLayer consensus"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests/direct"]
+markers = [
+    "integration: runs against a GenLayer network (tests/integration)",
+]
