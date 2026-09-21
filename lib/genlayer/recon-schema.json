@@ -1,0 +1,249 @@
+{
+  "ctor": {
+    "kwparams": {},
+    "params": []
+  },
+  "methods": {
+    "cancel_recon": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "null"
+    },
+    "close_recon": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "null"
+    },
+    "create_recon": {
+      "kwparams": {},
+      "params": [
+        [
+          "question",
+          "string"
+        ],
+        [
+          "terms_json",
+          "string"
+        ],
+        [
+          "bond_required",
+          "int"
+        ]
+      ],
+      "payable": true,
+      "readonly": false,
+      "ret": "string"
+    },
+    "expire_result": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "null"
+    },
+    "finalize_result": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "null"
+    },
+    "get_history": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_protocol_info": {
+      "kwparams": {},
+      "params": [],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_recon": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_result": {
+      "kwparams": {},
+      "params": [
+        [
+          "result_id",
+          "string"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_results": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_returned_deposits": {
+      "kwparams": {},
+      "params": [
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "list_by_creator": {
+      "kwparams": {},
+      "params": [
+        [
+          "creator",
+          "string"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "list_recons": {
+      "kwparams": {},
+      "params": [
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "list_transitions": {
+      "kwparams": {},
+      "params": [
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    },
+    "observe_recon": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "string"
+    },
+    "refund_bond": {
+      "kwparams": {},
+      "params": [
+        [
+          "recon_id",
+          "string"
+        ]
+      ],
+      "payable": false,
+      "readonly": false,
+      "ret": "string"
+    },
+    "returned_for": {
+      "kwparams": {},
+      "params": [
+        [
+          "sender",
+          "string"
+        ],
+        [
+          "offset",
+          "int"
+        ],
+        [
+          "limit",
+          "int"
+        ]
+      ],
+      "readonly": true,
+      "ret": "dict"
+    }
+  }
+}

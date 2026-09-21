@@ -359,6 +359,10 @@ export type ChainTx = {
   status: string;
   execution: string;
   createdAt: string;
+  /** GenLayer's consensus outcome, as recorded (for example MAJORITY_AGREE). */
+  consensus: string;
+  /** How the validators voted, as recorded: vote -> count. */
+  votes: Record<string, number>;
 };
 
 type RawTx = {
@@ -366,7 +370,11 @@ type RawTx = {
   status?: string;
   created_at?: string;
   data?: { calldata?: string };
-  consensus_data?: { leader_receipt?: { execution_result?: string }[] | { execution_result?: string } };
+  result_name?: string;
+  consensus_data?: {
+    leader_receipt?: { execution_result?: string }[] | { execution_result?: string };
+    votes?: Record<string, string>;
+  };
 };
 
 function base64Bytes(s: string): Uint8Array {
@@ -389,6 +397,8 @@ export function decodeTx(t: RawTx): ChainTx | null {
   }
   const lr = t.consensus_data?.leader_receipt;
   const leader = Array.isArray(lr) ? lr[0] : lr;
+  const votes: Record<string, number> = {};
+  for (const v of Object.values(t.consensus_data?.votes ?? {})) votes[v] = (votes[v] ?? 0) + 1;
   return {
     hash: t.hash as `0x${string}`,
     method,
@@ -396,6 +406,8 @@ export function decodeTx(t: RawTx): ChainTx | null {
     status: t.status ?? "",
     execution: leader?.execution_result ?? "",
     createdAt: t.created_at ?? "",
+    consensus: t.result_name ?? "",
+    votes,
   };
 }
 

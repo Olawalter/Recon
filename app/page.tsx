@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>ok</main>;
+import { Landing } from "@/components/recon/landing";
+
+export default function Home() {
+  return <Landing />;
 }

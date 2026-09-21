@@ -99,7 +99,10 @@ def rpc(method, params, attempts=8):
                                                                   "User-Agent": UA})
             out = json.load(urllib.request.urlopen(req, timeout=120))
             if "error" in out:
-                raise RuntimeError(f"{method}: {out['error']}")
+                err = out["error"]
+                if "temporarily unavailable" in str(err).lower() or "-32002" in str(err):
+                    raise ConnectionError(f"{method}: {err}")       # overload: retried below
+                raise RuntimeError(f"{method}: {err}")
             return out["result"]
         except RuntimeError:
             raise
@@ -123,7 +126,9 @@ def _patch_transport():
                 text = str(e)
                 transient = any(s in text for s in (
                     "Connection", "timed out", "SSL", "502", "503", "504", "429",
-                    "<!DOCTYPE", "invalid JSON", "RemoteDisconnected", "reset"))
+                    "<!DOCTYPE", "invalid JSON", "RemoteDisconnected", "reset",
+                    # StudioNet answers overload as a JSON-RPC error, not an HTTP one
+                    "temporarily unavailable", "-32002"))
                 if not transient or i == 7:
                     raise
                 time.sleep(5 + 5 * i)

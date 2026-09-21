@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/*
+ * RECON design system: a forensic information terminal.
+ *
+ * The palette is the brief's own: graphite, charcoal and slate surfaces, warm
+ * white text, one signal colour (amber) spent where the protocol acts or needs
+ * attention. Hairlines draw structure; there are no shadows, gradients or glow.
+ * Instrument Sans carries prose and headings; Martian Mono carries every
+ * identifier, address, hash, date and figure, so technical values always read
+ * as technical values. Two state colours are reserved for evidence: supports
+ * and conflicts. They always appear with a word, never colour alone.
+ *
+ * Contrast, computed (WCAG): warm white 14.0 to 16.8, amber 8.0 to 9.6, muted
+ * grey 5.0 to 6.0, support 8.4 to 10.1, conflict 6.3 to 7.5 across all three
+ * surfaces; control borders (edge-strong) 3.3 to 4.0.
+ */
+
+@theme {
+  --color-graphite: #0d0f12;
+  --color-charcoal: #15181d;
+  --color-slate: #1d2229;
+  --color-hairline: #2a3038;
+  --color-edge: #3a414b;
+  --color-edge-strong: #6a727e;
+  --color-warm: #f2f0ea;
+  --color-muted: #8a919b;
+  --color-amber: #f2a93b;
+  --color-support: #6fcf97;
+  --color-conflict: #f2836b;
+
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--color-graphite);
+    color-scheme: dark;
+  }
+  body {
+    background: var(--color-graphite);
+    color: var(--color-warm);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-graphite);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 2px;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* a terminal pane: a hairline box with a monospace title strip */
+  .pane {
+    border: 1px solid var(--color-hairline);
+    background: var(--color-charcoal);
+  }
+  .pane-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-bottom: 1px solid var(--color-hairline);
+    padding: 0.5rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .pane-title .index {
+    color: var(--color-amber);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .mono {
+    font-family: var(--font-mono);
+  }
+  .control {
+    width: 100%;
+    border: 1px solid var(--color-edge-strong);
+    background: var(--color-graphite);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-warm);
+  }
+  .control:focus {
+    border-color: var(--color-amber);
+  }
+  .control[aria-invalid="true"] {
+    border-color: var(--color-conflict);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-edge-strong);
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--color-warm);
+  }
+  .btn:hover {
+    border-color: var(--color-warm);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    border-color: var(--color-amber);
+    background: var(--color-amber);
+    color: var(--color-graphite);
+    font-weight: 600;
+  }
+  .btn-primary:hover {
+    background: #f6bb61;
+    border-color: #f6bb61;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

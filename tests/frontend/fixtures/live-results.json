@@ -1,0 +1,683 @@
+{
+ "note": "Real results recorded on GenLayer StudioNet by the live suite (run of 21 September 2026), contract 0x895c056714414425F308dA6f65fBE4d4eCb8e775. Used as rendering fixtures.",
+ "question": "On what date was Python 3.12.0 released?",
+ "majority": {
+  "recon": {
+   "bond_deposited": "10000000000000000",
+   "bond_required": "10000000000000000",
+   "bond_status": "LOCKED",
+   "created_at": 1789989114,
+   "creator": "0xa99A68271732f60c8bB83a3AaC0053d12Ec46995",
+   "current_state": "",
+   "freshness_requirement": 0,
+   "last_observed_at": 0,
+   "latest_result_id": "",
+   "next_observation_at": 0,
+   "observation_window_end": 1789990973,
+   "observation_window_start": 1789989053,
+   "policy": {
+    "kind": "MAJORITY",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "question": "On what date was Python 3.12.0 released?",
+   "recon_id": "2",
+   "refunded_amount": "0",
+   "refunded_at": 0,
+   "result_count": 0,
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sources": [
+    {
+     "declared_class": "OFFICIAL",
+     "label": "python.org release page",
+     "origin": "python.org",
+     "source_id": "E1",
+     "url": "https://www.python.org/downloads/release/python-3120/"
+    },
+    {
+     "declared_class": "INDEPENDENT",
+     "label": "endoflife.date",
+     "origin": "endoflife.date",
+     "source_id": "E2",
+     "url": "https://endoflife.date/api/python.json"
+    },
+    {
+     "declared_class": "UNKNOWN",
+     "label": "RECON demonstration: conflicting digest",
+     "origin": "github:olawalter",
+     "source_id": "E3",
+     "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md"
+    }
+   ],
+   "status": "SUBMITTED",
+   "updated_at": 1789989114,
+   "validity_seconds": 120
+  },
+  "result": {
+   "conflicting_sources": [
+    "E3"
+   ],
+   "evidence": [
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Release date: Oct. 2, 2023",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "OFFICIAL",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "SUPPORTING",
+     "freshness": "CURRENT",
+     "origin": "python.org",
+     "published_at": "",
+     "retrieved_at": 1789989311,
+     "source_class": "OFFICIAL",
+     "source_id": "E1",
+     "source_url": "https://www.python.org/downloads/release/python-3120/",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "\"releaseDate\":\"2023-10-02\"",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "INDEPENDENT",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "SUPPORTING",
+     "freshness": "CURRENT",
+     "origin": "endoflife.date",
+     "published_at": "",
+     "retrieved_at": 1789989311,
+     "source_class": "INDEPENDENT",
+     "source_id": "E2",
+     "source_url": "https://endoflife.date/api/python.json",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Python 3.12.0 was released on 3 October 2023",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-03",
+     "declared_class": "UNKNOWN",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "CONFLICTING",
+     "freshness": "CURRENT",
+     "origin": "github:olawalter",
+     "published_at": "",
+     "retrieved_at": 1789989311,
+     "source_class": "UNKNOWN",
+     "source_id": "E3",
+     "source_url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md",
+     "updated_at": ""
+    }
+   ],
+   "evidence_sufficient": true,
+   "finalized_at": 0,
+   "groups": [
+    {
+     "claim": "2023-10-02",
+     "group": "endoflife.date",
+     "source_ids": [
+      "E2"
+     ]
+    },
+    {
+     "claim": "2023-10-03",
+     "group": "github:olawalter",
+     "source_ids": [
+      "E3"
+     ]
+    },
+    {
+     "claim": "2023-10-02",
+     "group": "python.org",
+     "source_ids": [
+      "E1"
+     ]
+    }
+   ],
+   "observation_time": 1789989311,
+   "policy": {
+    "kind": "MAJORITY",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "proposed_at": 1789989311,
+   "recon_id": "2",
+   "reconciliation_status": "RESOLVED",
+   "result_id": "2-R0",
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sequence": 0,
+   "state": "2023-10-02",
+   "status": "PROPOSED",
+   "summary": "2 of 3 independent source group(s) establish 2023-10-02 under MAJORITY",
+   "supporting_sources": [
+    "E1",
+    "E2"
+   ],
+   "valid_until": 1789989431
+  }
+ },
+ "derived": {
+  "recon": {
+   "bond_deposited": "10000000000000000",
+   "bond_required": "10000000000000000",
+   "bond_status": "LOCKED",
+   "created_at": 1789989143,
+   "creator": "0xa99A68271732f60c8bB83a3AaC0053d12Ec46995",
+   "current_state": "",
+   "freshness_requirement": 0,
+   "last_observed_at": 0,
+   "latest_result_id": "",
+   "next_observation_at": 0,
+   "observation_window_end": 1789990973,
+   "observation_window_start": 1789989053,
+   "policy": {
+    "kind": "STRICT",
+    "min_groups": 3,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "question": "On what date was Python 3.12.0 released?",
+   "recon_id": "4",
+   "refunded_amount": "0",
+   "refunded_at": 0,
+   "result_count": 0,
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sources": [
+    {
+     "declared_class": "OFFICIAL",
+     "label": "python.org release page",
+     "origin": "python.org",
+     "source_id": "E1",
+     "url": "https://www.python.org/downloads/release/python-3120/"
+    },
+    {
+     "declared_class": "INDEPENDENT",
+     "label": "endoflife.date",
+     "origin": "endoflife.date",
+     "source_id": "E2",
+     "url": "https://endoflife.date/api/python.json"
+    },
+    {
+     "declared_class": "UNKNOWN",
+     "label": "RECON demonstration: derived digest",
+     "origin": "github:olawalter",
+     "source_id": "E3",
+     "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/derived-report.md"
+    }
+   ],
+   "status": "SUBMITTED",
+   "updated_at": 1789989143,
+   "validity_seconds": 120
+  },
+  "result": {
+   "conflicting_sources": [],
+   "evidence": [
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Release date: Oct. 2, 2023 This is the stable release of Python 3.12.0",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "OFFICIAL",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "UNCONTESTED",
+     "freshness": "CURRENT",
+     "origin": "python.org",
+     "published_at": "",
+     "retrieved_at": 1789989443,
+     "source_class": "OFFICIAL",
+     "source_id": "E1",
+     "source_url": "https://www.python.org/downloads/release/python-3120/",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\",\"eol\":\"2028-10-31\"",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "INDEPENDENT",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "UNCONTESTED",
+     "freshness": "CURRENT",
+     "origin": "endoflife.date",
+     "published_at": "",
+     "retrieved_at": 1789989443,
+     "source_class": "INDEPENDENT",
+     "source_id": "E2",
+     "source_url": "https://endoflife.date/api/python.json",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Python 3.12 was first released on 2023-10-02.",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "UNKNOWN",
+     "derived_from": "E2",
+     "derived_quote": "According to endoflife.date, Python 3.12 was first released on 2023-10-02.",
+     "evidence_status": "UNCONTESTED",
+     "freshness": "CURRENT",
+     "origin": "github:olawalter",
+     "published_at": "",
+     "retrieved_at": 1789989443,
+     "source_class": "DERIVED",
+     "source_id": "E3",
+     "source_url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/derived-report.md",
+     "updated_at": ""
+    }
+   ],
+   "evidence_sufficient": false,
+   "finalized_at": 0,
+   "groups": [
+    {
+     "claim": "2023-10-02",
+     "group": "endoflife.date",
+     "source_ids": [
+      "E2",
+      "E3"
+     ]
+    },
+    {
+     "claim": "2023-10-02",
+     "group": "python.org",
+     "source_ids": [
+      "E1"
+     ]
+    }
+   ],
+   "observation_time": 1789989443,
+   "policy": {
+    "kind": "STRICT",
+    "min_groups": 3,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "proposed_at": 1789989443,
+   "recon_id": "4",
+   "reconciliation_status": "UNRESOLVED_INSUFFICIENT",
+   "result_id": "4-R0",
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sequence": 0,
+   "state": "UNRESOLVED",
+   "status": "PROPOSED",
+   "summary": "only 2 qualifying independent source group(s); STRICT needs 3",
+   "supporting_sources": [],
+   "valid_until": 1789989563
+  }
+ },
+ "grouped": {
+  "recon": {
+   "bond_deposited": "10000000000000000",
+   "bond_required": "10000000000000000",
+   "bond_status": "LOCKED",
+   "created_at": 1789989096,
+   "creator": "0xa99A68271732f60c8bB83a3AaC0053d12Ec46995",
+   "current_state": "",
+   "freshness_requirement": 0,
+   "last_observed_at": 0,
+   "latest_result_id": "",
+   "next_observation_at": 0,
+   "observation_window_end": 1789990973,
+   "observation_window_start": 1789989053,
+   "policy": {
+    "kind": "MAJORITY",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "question": "On what date was Python 3.12.0 released?",
+   "recon_id": "1",
+   "refunded_amount": "0",
+   "refunded_at": 0,
+   "result_count": 0,
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sources": [
+    {
+     "declared_class": "OFFICIAL",
+     "label": "python.org release page",
+     "origin": "python.org",
+     "source_id": "E1",
+     "url": "https://www.python.org/downloads/release/python-3120/"
+    },
+    {
+     "declared_class": "OFFICIAL",
+     "label": "PEP 693 release schedule",
+     "origin": "python.org",
+     "source_id": "E2",
+     "url": "https://peps.python.org/pep-0693/"
+    },
+    {
+     "declared_class": "INDEPENDENT",
+     "label": "endoflife.date",
+     "origin": "endoflife.date",
+     "source_id": "E3",
+     "url": "https://endoflife.date/api/python.json"
+    },
+    {
+     "declared_class": "UNKNOWN",
+     "label": "a release page that does not exist",
+     "origin": "python.org",
+     "source_id": "E4",
+     "url": "https://www.python.org/downloads/release/python-3990/"
+    }
+   ],
+   "status": "SUBMITTED",
+   "updated_at": 1789989096,
+   "validity_seconds": 120
+  },
+  "result": {
+   "conflicting_sources": [],
+   "evidence": [
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Release date: Oct. 2, 2023 This is the stable release of Python 3.12.0",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "OFFICIAL",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "SUPPORTING",
+     "freshness": "CURRENT",
+     "origin": "python.org",
+     "published_at": "",
+     "retrieved_at": 1789989269,
+     "source_class": "OFFICIAL",
+     "source_id": "E1",
+     "source_url": "https://www.python.org/downloads/release/python-3120/",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "Last modified: 2026-03-04 19:30:05 UTC",
+     "availability": "AVAILABLE",
+     "claim": "3.12.0 final: Monday, 2023-10-02",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "OFFICIAL",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "SUPPORTING",
+     "freshness": "CURRENT",
+     "origin": "python.org",
+     "published_at": "2026-03-04",
+     "retrieved_at": 1789989269,
+     "source_class": "OFFICIAL",
+     "source_id": "E2",
+     "source_url": "https://peps.python.org/pep-0693/",
+     "updated_at": "2026-09-18"
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\",\"eol\":\"2028-10-31\"",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "INDEPENDENT",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "SUPPORTING",
+     "freshness": "CURRENT",
+     "origin": "endoflife.date",
+     "published_at": "",
+     "retrieved_at": 1789989269,
+     "source_class": "INDEPENDENT",
+     "source_id": "E3",
+     "source_url": "https://endoflife.date/api/python.json",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "MISSING",
+     "claim": "",
+     "claim_type": "TEMPORAL",
+     "claim_value": "NONE",
+     "declared_class": "UNKNOWN",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "UNAVAILABLE",
+     "freshness": "UNAVAILABLE",
+     "origin": "python.org",
+     "published_at": "",
+     "retrieved_at": 1789989269,
+     "source_class": "UNKNOWN",
+     "source_id": "E4",
+     "source_url": "https://www.python.org/downloads/release/python-3990/",
+     "updated_at": ""
+    }
+   ],
+   "evidence_sufficient": true,
+   "finalized_at": 0,
+   "groups": [
+    {
+     "claim": "2023-10-02",
+     "group": "endoflife.date",
+     "source_ids": [
+      "E3"
+     ]
+    },
+    {
+     "claim": "2023-10-02",
+     "group": "python.org",
+     "source_ids": [
+      "E1",
+      "E2"
+     ]
+    }
+   ],
+   "observation_time": 1789989269,
+   "policy": {
+    "kind": "MAJORITY",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "proposed_at": 1789989269,
+   "recon_id": "1",
+   "reconciliation_status": "RESOLVED",
+   "result_id": "1-R0",
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sequence": 0,
+   "state": "2023-10-02",
+   "status": "PROPOSED",
+   "summary": "2 of 2 independent source group(s) establish 2023-10-02 under MAJORITY (1 unavailable)",
+   "supporting_sources": [
+    "E1",
+    "E2",
+    "E3"
+   ],
+   "valid_until": 1789989389
+  }
+ },
+ "strict": {
+  "recon": {
+   "bond_deposited": "10000000000000000",
+   "bond_required": "10000000000000000",
+   "bond_status": "LOCKED",
+   "created_at": 1789989128,
+   "creator": "0xa99A68271732f60c8bB83a3AaC0053d12Ec46995",
+   "current_state": "",
+   "freshness_requirement": 0,
+   "last_observed_at": 0,
+   "latest_result_id": "",
+   "next_observation_at": 0,
+   "observation_window_end": 1789990973,
+   "observation_window_start": 1789989053,
+   "policy": {
+    "kind": "STRICT",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "question": "On what date was Python 3.12.0 released?",
+   "recon_id": "3",
+   "refunded_amount": "0",
+   "refunded_at": 0,
+   "result_count": 0,
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sources": [
+    {
+     "declared_class": "OFFICIAL",
+     "label": "python.org release page",
+     "origin": "python.org",
+     "source_id": "E1",
+     "url": "https://www.python.org/downloads/release/python-3120/"
+    },
+    {
+     "declared_class": "INDEPENDENT",
+     "label": "endoflife.date",
+     "origin": "endoflife.date",
+     "source_id": "E2",
+     "url": "https://endoflife.date/api/python.json"
+    },
+    {
+     "declared_class": "UNKNOWN",
+     "label": "RECON demonstration: conflicting digest",
+     "origin": "github:olawalter",
+     "source_id": "E3",
+     "url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md"
+    }
+   ],
+   "status": "SUBMITTED",
+   "updated_at": 1789989128,
+   "validity_seconds": 120
+  },
+  "result": {
+   "conflicting_sources": [
+    "E1",
+    "E2",
+    "E3"
+   ],
+   "evidence": [
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Release date: Oct. 2, 2023",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "OFFICIAL",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "CONFLICTING",
+     "freshness": "CURRENT",
+     "origin": "python.org",
+     "published_at": "",
+     "retrieved_at": 1789989407,
+     "source_class": "OFFICIAL",
+     "source_id": "E1",
+     "source_url": "https://www.python.org/downloads/release/python-3120/",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "{\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\"",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-02",
+     "declared_class": "INDEPENDENT",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "CONFLICTING",
+     "freshness": "CURRENT",
+     "origin": "endoflife.date",
+     "published_at": "",
+     "retrieved_at": 1789989407,
+     "source_class": "INDEPENDENT",
+     "source_id": "E2",
+     "source_url": "https://endoflife.date/api/python.json",
+     "updated_at": ""
+    },
+    {
+     "as_of_quote": "",
+     "availability": "AVAILABLE",
+     "claim": "Python 3.12.0 was released on 3 October 2023",
+     "claim_type": "TEMPORAL",
+     "claim_value": "2023-10-03",
+     "declared_class": "UNKNOWN",
+     "derived_from": "",
+     "derived_quote": "",
+     "evidence_status": "CONFLICTING",
+     "freshness": "CURRENT",
+     "origin": "github:olawalter",
+     "published_at": "",
+     "retrieved_at": 1789989407,
+     "source_class": "UNKNOWN",
+     "source_id": "E3",
+     "source_url": "https://raw.githubusercontent.com/Olawalter/Recon/c44d984cbe65b408b4a6866f7058447ba9634865/demo/conflicting-report.md",
+     "updated_at": ""
+    }
+   ],
+   "evidence_sufficient": true,
+   "finalized_at": 0,
+   "groups": [
+    {
+     "claim": "2023-10-02",
+     "group": "endoflife.date",
+     "source_ids": [
+      "E2"
+     ]
+    },
+    {
+     "claim": "2023-10-03",
+     "group": "github:olawalter",
+     "source_ids": [
+      "E3"
+     ]
+    },
+    {
+     "claim": "2023-10-02",
+     "group": "python.org",
+     "source_ids": [
+      "E1"
+     ]
+    }
+   ],
+   "observation_time": 1789989407,
+   "policy": {
+    "kind": "STRICT",
+    "min_groups": 2,
+    "stale_contributes": false
+   },
+   "policy_rules": "RECON-POLICY-1",
+   "proposed_at": 1789989407,
+   "recon_id": "3",
+   "reconciliation_status": "UNRESOLVED_CONFLICT",
+   "result_id": "3-R0",
+   "result_type": {
+    "kind": "TEMPORAL"
+   },
+   "sequence": 0,
+   "state": "UNRESOLVED",
+   "status": "PROPOSED",
+   "summary": "3 independent source group(s) disagree; STRICT cannot establish a state",
+   "supporting_sources": [],
+   "valid_until": 1789989527
+  }
+ }
+}
