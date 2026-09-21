@@ -101,7 +101,9 @@ def _rate_limited(text) -> int:
     if "-32029" not in text and "Rate limit exceeded" not in text:
         return 0
     m = re.search(r"retry_after_seconds\W+(\d+)", text)
-    return min(int(m.group(1)) if m else 120, 3600) + 5
+    if m:
+        return min(int(m.group(1)), 3600) + 5
+    return 65 if "per minute" in text else 300          # StudioNet also caps 30 a minute
 
 
 def rpc(method, params, attempts=8):
@@ -415,7 +417,7 @@ class World:
                 request="majority")
             # The last request observed is the one surely still inside its
             # finality delay; the first may already be past it.
-            last = CASES[-1]
+            last = list(CASES)[-1]
             live.record["walls"]["finalize_early"] = live.write(
                 live.observer, "finalize_result", self.ids[last], step="finalize before the delay (refused)",
                 request=last)

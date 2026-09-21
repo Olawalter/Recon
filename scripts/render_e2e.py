@@ -153,10 +153,13 @@ def live_section() -> list:
         "",
         "### The bond",
         "",
-        f"The contract held {gen(cb['before_refunds'])} before the refunds and {gen(cb['after_refunds'])} after. "
-        f"The creator's balance was {gen(kb['before'])} before the run and {gen(kb['after'])} after: every bond "
-        f"and every refused deposit came back (StudioNet charges no gas). `total_bonded` afterwards: "
-        f"{gen(LIVE['protocol_after']['total_bonded'])}.",
+        f"This run's creator had {gen(kb['before'])} before the run and {gen(kb['after'])} after: every bond it "
+        "locked and every deposit the contract refused came back (StudioNet charges no gas). "
+        f"The contract held {gen(cb['before_refunds'])} before this run's refunds and {gen(cb['after_refunds'])} "
+        "after; what remained belonged to requests left open by earlier, aborted runs, and matches the "
+        f"accounting exactly: `total_bonded` {gen(LIVE['protocol_after']['total_bonded'])} equals the sum held by "
+        f"every request on the contract, {gen(LIVE.get('bonds_held_by_requests', 0))}. Those requests were then "
+        "closed and refunded by `scripts/settle_leftovers.py`.",
         "",
         "| Refund | Transaction |", "|---|---|",
     ]

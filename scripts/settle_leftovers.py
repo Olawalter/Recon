@@ -29,6 +29,26 @@ def main() -> int:
     from genlayer_py.chains import studionet
     from genlayer_py.types import TransactionStatus
 
+    import re
+    from genlayer_py.provider.provider import GenLayerProvider
+
+    # StudioNet refuses calls over 30 a minute (and 500 an hour) with -32029
+    # before processing them; wait as long as it says and send again
+    original = GenLayerProvider.make_request
+
+    def patient(self, method, params):
+        for _ in range(20):
+            try:
+                return original(self, method, params)
+            except Exception as e:
+                if "-32029" not in str(e) and "Rate limit" not in str(e):
+                    raise
+                m = re.search(r"retry_after_seconds\W+(\d+)", str(e))
+                time.sleep((int(m.group(1)) if m else 65) + 5)
+        return original(self, method, params)
+
+    GenLayerProvider.make_request = patient
+
     address, ids = sys.argv[1], sys.argv[2:]
     acct = Account.create()
     rpc("sim_fundAccount", [acct.address, 10 ** 18])

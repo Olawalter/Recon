@@ -7,8 +7,10 @@ It was done adversarially, by a reader who had not written the code. They were a
 item by following the code paths, not to trust comments or documentation. Each defect was reproduced
 against the contract's own functions before it was fixed.
 
-The review found seven defects, four in the contract and three in the interface. All seven are fixed,
-each is held by a test, and each fix was mutation-checked: breaking the fix makes the suite fail.
+The review found seven defects, four in the contract and three in the interface. All seven are fixed.
+Six are held by tests, and each of those fixes was mutation-checked: breaking the fix makes the suite
+fail. The seventh (D7, in the create flow's signing step) has no automated test. It was checked by
+reading the code.
 Nothing found would let anyone take GEN, pay a bond twice or lock a bond forever.
 
 ## Contract
@@ -110,6 +112,25 @@ create flow assumed zero and could mistake an older request for the new one.
   yet", until the transaction listing caught up. It now infers both from a recorded result and says
   so, and re-reads the listing as soon as the request changes.
 - The transaction tracker said a creation "fetches the sources"; only an observation does.
+- After a write, the page re-read the contract only once GenLayer finality had also been seen, well
+  after the tracker said "recorded". It now re-reads the moment the contract shows the write
+  (`onRecorded`), and the create flow opens the new request then.
+- Right after a refund, the bond panel said the refund transaction "could not be located" while
+  StudioNet's listing caught up. A refund minutes old now reads as being looked up.
+
+## Found on the live network
+
+- **The interface could exhaust a visitor's own allowance.** StudioNet counts every contract read
+  (`gen_call`) against the same 500-an-hour allowance per address as sending a transaction (error
+  `-32029`). The detail page read three views every 15 seconds, about 720 calls an hour, so a visitor
+  who left it open could no longer send anything. Pages now poll every two minutes, not at all while
+  the tab is hidden, and stop once a request is over with its bond returned. A visitor's own write
+  still refreshes the page at once.
+- **A demonstration page denied its own claim.** The conflicting demonstration page said it was "not a
+  statement about Python". Read on its own, as every page now is (D2), one validator model fairly
+  took that as no claim. The other validators outvoted it and nothing was recorded, which is the
+  protocol working, but the page was reworded so it no longer contradicts what it plays. A round that
+  ends without a majority records nothing, and the live suite observes again and lists that round.
 
 ## Risks accepted, and why
 
@@ -145,7 +166,9 @@ create flow assumed zero and could mistake an older request for the new one.
 ## How the review is held
 
 - 204 direct tests, run in GenVM direct mode.
-- A mutation sweep of 101 mutants over the contract's guards (`scripts/mutate.py`). Every mutant
-  either fails the suite or is listed as equivalent with the reason no call can reach it.
-- 66 interface tests.
+- A mutation sweep of 101 mutants over the contract's guards (`scripts/mutate.py`). The last full run
+  killed 98. Two survivors are documented equivalents (guards no call can reach, with the reason in the
+  script). The third was an equivalent spelling of the D3 fix; it was replaced by the original bug
+  (literal fences deleted), which the suite kills.
+- 70 interface tests.
 - The live StudioNet suite and the in-app run, re-run on the fixed deployment (see [e2e.md](e2e.md)).

@@ -118,19 +118,19 @@ See [docs/bond-model.md](docs/bond-model.md).
 ## Verified on StudioNet
 
 <!-- verified:start -->
-**In the app** (2026-09-21): request #17 was created with a 0.02 GEN bond, observed, finalized as **2023-10-02** (RESOLVED), closed and refunded. That is 5 wallet-signed transactions, all FINALIZED with MAJORITY_AGREE.
+**In the app** (2026-09-21): request #9 was created with a 0.02 GEN bond, observed, finalized as **2023-10-02** (RESOLVED), closed and refunded. That is 5 wallet-signed transactions, all FINALIZED with MAJORITY_AGREE.
 
 **Live suite** (2026-09-21): 7 reconciliations, 8 walls refused in the contract's own words, every bond refunded.
 
 | Case | Outcome | Observation |
 |---|---|---|
-| Two pages of one publisher are one voice; a missing page is not a contradiction | RESOLVED | [`0xfdad614e…f3eec1`](https://explorer-studio.genlayer.com/tx/0xfdad614ef500450f1da527c572cf2ccf90c8971675bfc0c4e1f991de47f3eec1) |
-| Majority resolves against one conflicting source | RESOLVED | [`0x7f33d557…ab9d4e`](https://explorer-studio.genlayer.com/tx/0x7f33d55758c8ebe36b7a406c6a5c55d2502c1ca09747116e604dc6ddb2ab9d4e) |
-| Strict leaves the same evidence unresolved | UNRESOLVED_CONFLICT | [`0x6616f279…0e528d`](https://explorer-studio.genlayer.com/tx/0x6616f279c7fb70d1703ac8503c014a91678cd3fd0ec3a10ca88b9a64320e528d) |
-| A source that repeats another adds no voice | UNRESOLVED_INSUFFICIENT | [`0xaaa7ae42…73e884`](https://explorer-studio.genlayer.com/tx/0xaaa7ae42993b1f2f1402c777327b4b047571af7f425e3ce935ed5c55a773e884) |
-| Old evidence is stale when freshness is required | UNRESOLVED_INSUFFICIENT | [`0xe3254a9d…b07be3`](https://explorer-studio.genlayer.com/tx/0xe3254a9dea95133c6a023cd4d05f058b538615c3ee49ab89e00670b368b07be3) |
-| An official source, independently confirmed | RESOLVED | [`0x6b2adf29…587d82`](https://explorer-studio.genlayer.com/tx/0x6b2adf29a2d437dbc7a90ba670cc67956f03b16240505dd0a76c27e5a3587d82) |
-| A page that tries to instruct the panel | RESOLVED | [`0xe4eb7a50…8920bf`](https://explorer-studio.genlayer.com/tx/0xe4eb7a50ef4e300b8e81cda72d66ee5c22f8e67eca97cf1baebf920fe08920bf) |
+| Two pages of one publisher are one voice; a missing page is not a contradiction | RESOLVED | [`0x811dfb0f…c99090`](https://explorer-studio.genlayer.com/tx/0x811dfb0f50663badbe138d91f96213b9eeb1d3468749cdc2fb9f5a90b1c99090) |
+| Majority resolves against one conflicting source | RESOLVED | [`0xf5119be1…f4ad69`](https://explorer-studio.genlayer.com/tx/0xf5119be133685462e5fc4b60022e35e8b305cc5576b9c40c95993e3e97f4ad69) |
+| Strict leaves the same evidence unresolved | UNRESOLVED_CONFLICT | [`0xd305da01…e72a0c`](https://explorer-studio.genlayer.com/tx/0xd305da01e4c307b3de225797e1d8337e54c538182509b2b649c58b3ad1e72a0c) |
+| A source that repeats another adds no voice | UNRESOLVED_INSUFFICIENT | [`0x1f8bd39f…e7e626`](https://explorer-studio.genlayer.com/tx/0x1f8bd39f9fd2d9e67705a0226102775d901e4b424062ba01aedad23f45e7e626) |
+| Old evidence is stale when freshness is required | UNRESOLVED_INSUFFICIENT | [`0x0e8c924b…6739bf`](https://explorer-studio.genlayer.com/tx/0x0e8c924b9be403c889e204c1e6de22b366ea50614980cbe78f54c175c56739bf) |
+| An official source, independently confirmed | RESOLVED | [`0x54f6d1bd…bcd42c`](https://explorer-studio.genlayer.com/tx/0x54f6d1bd507356a549932ab65b75b94dceb23d9a001d4ba42a06e553dabcd42c) |
+| A page that tries to instruct the panel | RESOLVED | [`0x842d4950…6c4846`](https://explorer-studio.genlayer.com/tx/0x842d4950bd6e2de9c8e03e93fa80e6ce1bd9dc88c21823d2fec8f32faf6c4846) |
 
 Full record: [docs/e2e.md](docs/e2e.md).
 <!-- verified:end -->
@@ -178,7 +178,7 @@ current, and can be recorded as expired.
 pip install -r requirements.txt
 python scripts/fetch_genvm_bundle.py              # once, on a cold cache
 genvm-lint check contracts/recon.py --json
-python -m pytest tests/direct -v                  # 186 GenVM direct-mode tests
+python -m pytest tests/direct -v                  # 204 GenVM direct-mode tests
 python scripts/mutate.py                          # the mutation sweep over the contract
 
 npm ci

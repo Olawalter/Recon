@@ -83,9 +83,9 @@ lib/
   wallet/                     EIP-6963 discovery and the connected provider
   validation/                 the create form's rules, mirroring the contract's
   formatting/                 every word the interface says about contract state
-tests/direct/                 186 GenVM direct-mode tests of the contract
+tests/direct/                 204 GenVM direct-mode tests of the contract
 tests/integration/            the live StudioNet suite
-tests/frontend/               54 tests of the interface, rendered from real StudioNet results
+tests/frontend/               70 tests of the interface, rendered from real StudioNet results
 scripts/                      deploy, verify, mutation sweep, probes
 ```
 
