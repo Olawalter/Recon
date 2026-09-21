@@ -12,7 +12,7 @@ import { StateHistory } from "@/components/recon/state-history";
 import { Pane } from "@/components/ui/pane";
 import { configResult } from "@/lib/genlayer/config";
 import { pastValidity } from "@/lib/genlayer/acts";
-import { useChainTxs, useNow, useReconView } from "@/lib/genlayer/hooks";
+import { DETAIL_POLL_MS, useChainTxs, useNow, useReconView } from "@/lib/genlayer/hooks";
 import { isMissing, observationFor, transactionsFor } from "@/lib/genlayer/recon";
 import { POLICY, RESULT_KIND, SOURCE_CLASS, describePolicy, duration, formatTime, reconLabel, resultLabel,
   stateWords } from "@/lib/formatting/present";
@@ -24,7 +24,7 @@ import { hostLabel } from "@/components/conflict-graph/conflict-graph";
  * on GenLayer; the page computes nothing that the contract decides.
  */
 export function ReconDetail({ id }: { id: string }) {
-  const view = useReconView(id, 15_000);
+  const view = useReconView(id, DETAIL_POLL_MS);
   const chain = useChainTxs(30_000);
   const now = useNow(15_000);
   // Re-read the transaction listing the moment the request changes, rather

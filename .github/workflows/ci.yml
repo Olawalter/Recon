@@ -72,7 +72,7 @@ jobs:
       SKIP_INTEGRATION: "0"
       # the deployment of record, and the commit that pins the demonstration pages
       RECON_CONTRACT: "0x39C9137F746BfA133Dc04776ffcCF876370D01E8"
-      RECON_DEMO_COMMIT: c44d984cbe65b408b4a6866f7058447ba9634865
+      RECON_DEMO_COMMIT: d0266e37af45211e488b286327745a9f7d3fbab9
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

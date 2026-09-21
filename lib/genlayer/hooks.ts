@@ -29,9 +29,10 @@ type ReadState<T> = { key: string; data?: T; error?: Error };
  * render or synchronously inside the effect.
  */
 export function useRead<T>(key: string, run: (c: GenLayerClient, cfg: AppConfig) => Promise<T>,
-                           options: { enabled?: boolean; pollMs?: number } = {}): Query<T> {
+                           options: { enabled?: boolean; pollMs?: number; until?: (data: T) => boolean } = {}): Query<T> {
   const { client, config } = useRecon();
   const { enabled = true, pollMs } = options;
+  const untilRef = useRef(options.until);
   const [nonce, setNonce] = useState(0);
   const [result, setResult] = useState<ReadState<T>>();
   const runRef = useRef(run);
@@ -39,26 +40,44 @@ export function useRead<T>(key: string, run: (c: GenLayerClient, cfg: AppConfig)
 
   useEffect(() => {
     runRef.current = run;
+    untilRef.current = options.until;
   });
 
   useEffect(() => {
     if (!enabled) return;
     let live = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    const hidden = () => typeof document !== "undefined" && document.visibilityState === "hidden";
     const tick = async () => {
+      // a hidden tab reads nothing: every contract read counts against the
+      // same hourly StudioNet allowance as the visitor's own transactions
+      if (pollMs && hidden()) {
+        timer = setTimeout(tick, pollMs);
+        return;
+      }
+      let done = false;
       try {
         const value = await runRef.current(client, config);
+        done = !!untilRef.current?.(value);
         if (live) setResult({ key: readKey, data: value });
       } catch (err) {
         if (live) setResult({ key: readKey, error: err as Error });
       } finally {
-        if (live && pollMs) timer = setTimeout(tick, pollMs);
+        if (live && pollMs && !done) timer = setTimeout(tick, pollMs);
       }
     };
     void tick();
+    // coming back to the tab reads once at once, rather than waiting a whole interval
+    const onVisible = () => {
+      if (!pollMs || hidden()) return;
+      if (timer) clearTimeout(timer);
+      void tick();
+    };
+    if (pollMs) document.addEventListener("visibilitychange", onVisible);
     return () => {
       live = false;
       if (timer) clearTimeout(timer);
+      if (pollMs) document.removeEventListener("visibilitychange", onVisible);
     };
     // readKey identifies this read, and changes when reload() is called
   }, [client, config, readKey, enabled, pollMs]);
@@ -72,22 +91,35 @@ export function useRead<T>(key: string, run: (c: GenLayerClient, cfg: AppConfig)
   };
 }
 
+/**
+ * StudioNet counts every contract read (gen_call) against the same hourly
+ * allowance per address as sending a transaction: 500 an hour. Pages therefore
+ * poll slowly, not at all while hidden, and never once nothing can change; a
+ * visitor's own write refreshes its page the moment the contract shows it.
+ */
+export const LIST_POLL_MS = 120_000;
+export const DETAIL_POLL_MS = 120_000;
+
 export const useDeployment = (): Query<DeploymentCheck> => useRead("deployment", (c, cfg) => validateDeployment(c, cfg));
 export const useProtocol = (): Query<ProtocolInfo> => useRead("protocol", (c, cfg) => reads.protocol(c, cfg));
 export const useRecons = (limit = 50): Query<Page<Recon>> =>
-  useRead(`recons:${limit}`, (c, cfg) => reads.list(c, cfg, 0, limit), { pollMs: 30_000 });
+  useRead(`recons:${limit}`, (c, cfg) => reads.list(c, cfg, 0, limit), { pollMs: LIST_POLL_MS });
 export const useTransitions = (limit = 50): Query<Page<Transition>> =>
-  useRead(`transitions:${limit}`, (c, cfg) => reads.transitions(c, cfg, 0, limit), { pollMs: 30_000 });
+  useRead(`transitions:${limit}`, (c, cfg) => reads.transitions(c, cfg, 0, limit), { pollMs: LIST_POLL_MS });
 
 export type ReconView = { recon: Recon; results: ReconResult[]; history: Transition[] };
 
 /** One request with every result (oldest first) and its history (oldest first). */
+/** A request that is over, with its bond returned, cannot change: nothing to poll for. */
+export const isOver = (v: ReconView): boolean =>
+  ["CLOSED", "FAILED", "CANCELLED"].includes(v.recon.status) && v.recon.bond_status === "REFUNDED";
+
 export function useReconView(id: string, pollMs?: number): Query<ReconView> {
   return useRead(`recon:${id}`, async (c, cfg) => {
     const recon = await reads.recon(c, cfg, id);
     const [results, history] = await Promise.all([reads.results(c, cfg, id, 0, 50), reads.history(c, cfg, id, 0, 50)]);
     return { recon, results: [...results.items].reverse(), history: [...history.items].reverse() };
-  }, { pollMs });
+  }, { pollMs, until: isOver });
 }
 
 export function useMyRecons(address?: string): Query<Page<Recon>> {

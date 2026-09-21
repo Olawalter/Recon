@@ -6,11 +6,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AppConfig } from "@/lib/genlayer/config";
+import { isOver } from "@/lib/genlayer/hooks";
 import { refusalOf, rungsFor, runWrite, walletFailure, type TxState } from "@/lib/genlayer/tx";
 
 const view = (s: TxState) => Object.fromEntries(rungsFor(s).map((r) => [r.step, r.state]));
 const HASH = `0x${"ab".repeat(32)}` as const;
-const config = { contractAddress: "0x895c056714414425F308dA6f65fBE4d4eCb8e775" } as unknown as AppConfig;
+const config = { contractAddress: "0x39C9137F746BfA133Dc04776ffcCF876370D01E8" } as unknown as AppConfig;
 // a leader receipt's result payload: one code byte, then the contract's text
 const payloadOf = (text: string) => btoa(String.fromCharCode(1) + text);
 
@@ -131,5 +132,16 @@ describe("the page is told when the contract shows the write", () => {
     await vi.advanceTimersByTimeAsync(200_000);
     expect((await run).failure).toBe("STATE_NOT_CAUGHT_UP");
     expect(recorded).toBe(0);
+  });
+});
+
+describe("pages stop reading a request that can no longer change", () => {
+  const view = (status: string, bond: string) => ({ recon: { status, bond_status: bond }, results: [], history: [] }) as never;
+  it("stops only once the request is over and its bond returned", () => {
+    expect(isOver(view("CLOSED", "REFUNDED"))).toBe(true);
+    expect(isOver(view("CANCELLED", "REFUNDED"))).toBe(true);
+    expect(isOver(view("CLOSED", "REFUNDABLE"))).toBe(false);          // a refund can still be sent
+    expect(isOver(view("FINALIZED", "LOCKED"))).toBe(false);           // can be observed again
+    expect(isOver(view("PROPOSED", "LOCKED"))).toBe(false);
   });
 });

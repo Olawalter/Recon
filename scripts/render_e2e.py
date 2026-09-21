@@ -118,6 +118,14 @@ def live_section() -> list:
         lines.append(f"| {CASE_TITLES.get(case, case)} | {res['reconciliation_status']} | {res['state']} | "
                      f"{link(v['observe_tx'])} | {votes(v['observe_facts']['votes'])} |")
     lines.append("")
+    retried = [(c, r) for c, v in LIVE["requests"].items() for r in v.get("rounds_without_majority", [])]
+    if retried:
+        lines += ["Rounds that ended without a majority recorded nothing, and the request was observed again. "
+                  "Each one is listed here, not hidden:", "",
+                  "| Case | Transaction | GenLayer | Votes |", "|---|---|---|---|"]
+        lines += [f"| {c} | {link(r['tx'])} | {r['status']}, {r['consensus']} | {votes(r['votes'] or {})} |"
+                  for c, r in retried]
+        lines.append("")
     for case, v in LIVE["requests"].items():
         res = v["result"]
         lines += [f"### {CASE_TITLES.get(case, case)}", "", f"*{res['summary']}*", "", *evidence_table(res["evidence"]), ""]

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Pane } from "@/components/ui/pane";
-import { useRead } from "@/lib/genlayer/hooks";
+import { LIST_POLL_MS, useRead } from "@/lib/genlayer/hooks";
 import { reads, type Transition } from "@/lib/genlayer/recon";
 import { formatTime, reconLabel, resultLabel, stateWords } from "@/lib/formatting/present";
 
@@ -17,7 +17,7 @@ const PAGE = 25;
  */
 export function History() {
   const [pages, setPages] = useState(1);
-  const q = useRead(`history:${pages}`, (c, cfg) => reads.transitions(c, cfg, 0, PAGE * pages), { pollMs: 30_000 });
+  const q = useRead(`history:${pages}`, (c, cfg) => reads.transitions(c, cfg, 0, PAGE * pages), { pollMs: LIST_POLL_MS });
   const items = q.data?.items ?? [];
   const byRecon = new Map<string, Transition[]>();
   for (const t of items) byRecon.set(t.recon_id, [...(byRecon.get(t.recon_id) ?? []), t]);

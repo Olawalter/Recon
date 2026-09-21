@@ -187,8 +187,8 @@ npm run typecheck
 npm test                                          # the interface, pinned to the deployed schema
 npm run build
 
-SKIP_INTEGRATION=0 RECON_CONTRACT=0x895c056714414425F308dA6f65fBE4d4eCb8e775 \
-RECON_DEMO_COMMIT=c44d984cbe65b408b4a6866f7058447ba9634865 \
+SKIP_INTEGRATION=0 RECON_CONTRACT=0x39C9137F746BfA133Dc04776ffcCF876370D01E8 \
+RECON_DEMO_COMMIT=d0266e37af45211e488b286327745a9f7d3fbab9 \
 python -m pytest tests/integration -v -s           # live StudioNet, about 40 minutes
 ```
 

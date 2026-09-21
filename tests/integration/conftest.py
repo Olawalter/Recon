@@ -32,6 +32,7 @@ docs/live-e2e.json.
 """
 import base64
 import json
+import re
 import os
 import pathlib
 import time
@@ -91,6 +92,18 @@ CASES = {
 }
 
 
+def _rate_limited(text) -> int:
+    """StudioNet refuses a call over its hourly allowance with JSON-RPC error
+    -32029 and says when to come back. The call was refused before it was
+    processed, so sending it again after that is safe. Returns the seconds to
+    wait, or 0 when this is not that error."""
+    text = str(text)
+    if "-32029" not in text and "Rate limit exceeded" not in text:
+        return 0
+    m = re.search(r"retry_after_seconds\W+(\d+)", text)
+    return min(int(m.group(1)) if m else 120, 3600) + 5
+
+
 def rpc(method, params, attempts=8):
     body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
     for i in range(attempts):
@@ -100,6 +113,11 @@ def rpc(method, params, attempts=8):
             out = json.load(urllib.request.urlopen(req, timeout=120))
             if "error" in out:
                 err = out["error"]
+                wait = _rate_limited(err)
+                if wait:
+                    print(f"  ... StudioNet rate limit; waiting {wait}s before sending {method} again", flush=True)
+                    time.sleep(wait)
+                    continue
                 if "temporarily unavailable" in str(err).lower() or "-32002" in str(err):
                     raise ConnectionError(f"{method}: {err}")       # overload: retried below
                 raise RuntimeError(f"{method}: {err}")
@@ -119,11 +137,17 @@ def _patch_transport():
     original = GenLayerProvider.make_request
 
     def make_request(self, method, params):
-        for i in range(8):
+        i = 0
+        while i < 8:
             try:
                 return original(self, method, params)
             except Exception as e:
                 text = str(e)
+                wait = _rate_limited(text)
+                if wait:
+                    print(f"  ... StudioNet rate limit; waiting {wait}s before sending {method} again", flush=True)
+                    time.sleep(wait)
+                    continue                                   # a refusal by the limiter is not an attempt
                 transient = any(s in text for s in (
                     "Connection", "timed out", "SSL", "502", "503", "504", "429",
                     "<!DOCTYPE", "invalid JSON", "RemoteDisconnected", "reset",
@@ -132,6 +156,7 @@ def _patch_transport():
                 if not transient or i == 7:
                     raise
                 time.sleep(5 + 5 * i)
+                i += 1
     GenLayerProvider.make_request = make_request
 
 
