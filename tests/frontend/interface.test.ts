@@ -11,6 +11,8 @@ import { PAYABLE_METHODS, REQUIRED_METHODS, checkResult, checkSchema, createCall
 import fixtures from "./fixtures/live-results.json";
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
+type SchemaView = { methods: Record<string, { params: [string, string][]; payable?: boolean | null }> };
+const view = (v: unknown) => clone(v) as SchemaView;
 
 describe("the deployed interface", () => {
   it("exposes every method the app calls, with the same parameters, and one payable method", () => {
@@ -19,22 +21,22 @@ describe("the deployed interface", () => {
   });
 
   it("refuses a contract whose method is missing, reordered or payable where it should not be", () => {
-    const missing = clone(schema) as { methods: Record<string, unknown> };
+    const missing = view(schema);
     delete missing.methods.observe_recon;
     expect(checkSchema(missing)).toMatch(/no observe_recon method/);
 
-    const reordered = clone(schema) as { methods: Record<string, { params: [string, string][] }> };
+    const reordered = view(schema);
     reordered.methods.create_recon!.params.reverse();
     expect(checkSchema(reordered)).toMatch(/create_recon method takes different parameters/);
 
-    const payable = clone(schema) as { methods: Record<string, { payable: boolean }> };
+    const payable = view(schema);
     payable.methods.refund_bond!.payable = true;
     expect(checkSchema(payable)).toMatch(/refund_bond method accepts value/);
     expect(checkSchema(null)).toMatch(/No contract schema/);
   });
 
   it("names every required method with the deployed parameter names", () => {
-    const methods = (schema as { methods: Record<string, { params: [string, string][] }> }).methods;
+    const methods = view(schema).methods;
     for (const [name, params] of Object.entries(REQUIRED_METHODS)) {
       expect(methods[name]!.params.map((p) => p[0]), name).toEqual(params);
     }
