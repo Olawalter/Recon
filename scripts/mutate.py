@@ -47,7 +47,9 @@ MUTANTS = [
     ("an IP host is a second publisher", 'if re.fullmatch(r"[0-9.]+", host) or host.startswith("["):', "if False:"),
     ("freshness under a day accepted", "if fresh != 0 and not DAY <= fresh <= MAX_FRESHNESS:",
      "if fresh != 0 and not MINUTE <= fresh <= MAX_FRESHNESS:"),
-    ("a fence is deleted, not replaced", 'ANGLE_RUN.sub(" ", str(text or ""))', 'ANGLE_RUN.sub("", str(text or ""))'),
+    # the original bug: literal fences deleted, so their neighbours join into a new one (deleting a whole
+    # maximal run of angle brackets instead of replacing it would be equivalent: its neighbours are not brackets)
+    ("fences deleted literally", 'ANGLE_RUN.sub(" ", str(text or ""))', 're.sub(r"<<<|>>>", "", str(text or ""))'),
 
     # ── evidence ──
     ("an invalid category is accepted", 'if v not in result_type["values"]:', "if False:"),

@@ -79,8 +79,8 @@ export function CreateFlow() {
     await sender.send({
       call: createCall(draft.question.replace(/\s+/g, " ").trim(), termsFromDraft(draft), toAtto(draft.bond)!),
       reconciled: reconCreated(client, config, who, known, knownReturned),
-      onSettled: async (final) => {
-        if (final.happened < 6) return;
+      // open the request as soon as the contract shows it; its page follows finality from there
+      onRecorded: async () => {
         const page = await reads.byCreator(client, config, who, 0, 1).catch(() => null);
         const id = page?.items[0]?.recon_id;
         if (id) router.push(`/recon/${id}`);

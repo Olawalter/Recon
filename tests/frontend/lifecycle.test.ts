@@ -105,3 +105,31 @@ describe("failures, named precisely", () => {
     expect(refusalOf({ consensus_data: { leader_receipt: [{ execution_result: "SUCCESS" }] } })).toBeNull();
   });
 });
+
+describe("the page is told when the contract shows the write", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it("calls onRecorded once the contract's state shows it, before GenLayer's finality is seen", async () => {
+    let recorded = 0;
+    const seen: TxState[] = [];
+    const poller = { getTransaction: async () => ({ statusName: "ACCEPTED" }) };      // never final
+    void runWrite({ config, client: { writeContract: async () => HASH } as never, poller: poller as never, pollMs: 1000,
+                    functionName: "observe_recon", args: ["1"], value: 0n, reconciled: async () => true,
+                    onRecorded: () => { recorded++; }, onUpdate: (s) => seen.push(s) });
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(recorded).toBe(1);
+    expect(seen.at(-1)!.phase).toBe("RUNNING");                                   // still waiting on finality
+  });
+
+  it("does not call it when the contract never shows the write", async () => {
+    let recorded = 0;
+    const poller = { getTransaction: async () => ({ statusName: "ACCEPTED" }) };
+    const run = runWrite({ config, client: { writeContract: async () => HASH } as never, poller: poller as never, pollMs: 1000,
+                           functionName: "observe_recon", args: ["1"], value: 0n, reconciled: async () => false,
+                           onRecorded: () => { recorded++; }, onUpdate: () => {} });
+    await vi.advanceTimersByTimeAsync(200_000);
+    expect((await run).failure).toBe("STATE_NOT_CAUGHT_UP");
+    expect(recorded).toBe(0);
+  });
+});

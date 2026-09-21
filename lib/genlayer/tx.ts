@@ -212,6 +212,9 @@ export type RunOptions = {
    * bond sent straight back, for instance).
    */
   reconciled: () => Promise<boolean | string>;
+  /** Called the moment the contract's state shows the write, so the page can
+   * re-read it then, not only once GenLayer's finality has also been seen. */
+  onRecorded?: () => void;
   onUpdate: (s: TxState) => void;
   poller?: GenLayerClient;
   pollMs?: number;
@@ -303,6 +306,7 @@ export async function runWrite(o: RunOptions): Promise<TxState> {
     return fail("The transaction was accepted, but the contract's state has not caught up yet. Reload in a minute.", "STATE_NOT_CAUGHT_UP");
   }
   set({ happened: 6, observed: [...state.observed, "CONSENSUS"] });
+  o.onRecorded?.();
 
   // GenLayer's own finality, tracked after the flow unblocks
   for (let i = 0; i < 90 && state.protocolStatus !== "FINALIZED"; i++) {

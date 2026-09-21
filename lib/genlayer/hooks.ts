@@ -115,6 +115,9 @@ export type SendOptions = {
   call: Call;
   /** Resolves true once the contract's own view reflects the write. */
   reconciled: () => Promise<boolean | string>;
+  /** As soon as the contract's state shows the write. */
+  onRecorded?: () => void;
+  /** Once the whole write has ended, finality included. */
   onSettled?: (final: TxState) => void;
 };
 
@@ -133,7 +136,7 @@ export function useSend(): Sender {
   const [state, setState] = useState<TxState>(initialTx);
 
   const send = useCallback(
-    async ({ call, reconciled, onSettled }: SendOptions) => {
+    async ({ call, reconciled, onRecorded, onSettled }: SendOptions) => {
       const refuse = (message: string, failure: TxState["failure"]) => {
         const next: TxState = { ...initialTx, phase: "FAILED", message, failure };
         setState(next);
@@ -151,6 +154,7 @@ export function useSend(): Sender {
         args: call.args,
         value: call.value,
         reconciled,
+        onRecorded,
         poller: reader,
         onUpdate: setState,
       });

@@ -1,17 +1,17 @@
 {
   "what": "One reconciliation request taken through its whole lifecycle in the RECON app itself: the app's own create form, EIP-6963 wallet discovery and transaction code, signed by the test wallet in tests/e2e/test-wallet.js holding throwaway, faucet-funded keys. Every field below is read back from StudioNet by scripts/record_app_e2e.py.",
-  "recorded_at": "2026-09-21T12:21:42Z",
+  "recorded_at": "2026-09-21T13:34:29Z",
   "network": "GenLayer StudioNet",
   "chain_id": 61999,
-  "contract": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
-  "recon_id": "17",
+  "contract": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
+  "recon_id": "9",
   "question": "On what date was Python 3.12.0 released?",
-  "creator": "0x75eF8923EDBB6470bEd349cDd5DAFFe9F61121E8",
+  "creator": "0x89756f8cC5BC12bfC18Db097Dc968D8F4F2b94Bd",
   "transactions": [
     {
-      "tx": "0x2a3da2336a87f3bd6dd93ab166925e31489478599698627b7684311658a89aee",
-      "from": "0x75eF8923EDBB6470bEd349cDd5DAFFe9F61121E8",
-      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "tx": "0x99dd62b9d94b3f0334ccde842f09b2ae4480bff02df8887d83da5a901b0b08a8",
+      "from": "0x89756f8cC5BC12bfC18Db097Dc968D8F4F2b94Bd",
+      "to": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
       "method": "create_recon",
       "args": [
         "On what date was Python 3.12.0 released?",
@@ -41,8 +41,8 @@
             "min_groups": 2,
             "stale_contributes": false
           },
-          "observation_window_start": 1789992060,
-          "observation_window_end": 1789993080,
+          "observation_window_start": 1789996200,
+          "observation_window_end": 1789997220,
           "freshness_requirement": 0,
           "validity_seconds": 86400
         },
@@ -56,16 +56,16 @@
         "agree": 3,
         "idle": 2
       },
-      "created_at": "2026-09-21T12:03:09.984148+00:00",
-      "explorer": "https://explorer-studio.genlayer.com/tx/0x2a3da2336a87f3bd6dd93ab166925e31489478599698627b7684311658a89aee"
+      "created_at": "2026-09-21T13:12:17.460991+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x99dd62b9d94b3f0334ccde842f09b2ae4480bff02df8887d83da5a901b0b08a8"
     },
     {
-      "tx": "0x834944a6341399270b23a55234d40882629ad01d4ab46285c3890e53118aaec5",
-      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
-      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "tx": "0xc0b0fb1c46c54fc4dbcd23344430806519c5476c26d7d815023683e644ef676f",
+      "from": "0x4F0bA2Cf2668920315358675e56ED9391a29BbdF",
+      "to": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
       "method": "observe_recon",
       "args": [
-        "17"
+        "9"
       ],
       "value_atto": "0",
       "status": "FINALIZED",
@@ -73,18 +73,19 @@
       "execution": "SUCCESS",
       "votes": {
         "agree": 3,
-        "idle": 2
+        "disagree": 1,
+        "idle": 1
       },
-      "created_at": "2026-09-21T12:04:20.521887+00:00",
-      "explorer": "https://explorer-studio.genlayer.com/tx/0x834944a6341399270b23a55234d40882629ad01d4ab46285c3890e53118aaec5"
+      "created_at": "2026-09-21T13:15:08.157686+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0xc0b0fb1c46c54fc4dbcd23344430806519c5476c26d7d815023683e644ef676f"
     },
     {
-      "tx": "0xfec5f4ee1e342d813688892e4a7faf490ec72d00f5cef2f4a7c3fd47fc7c978c",
-      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
-      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "tx": "0x7c9fbaf8320b4247ce9a11e3164e07cb37365331a8ecb0b6311a046484b2c481",
+      "from": "0x4F0bA2Cf2668920315358675e56ED9391a29BbdF",
+      "to": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
       "method": "finalize_result",
       "args": [
-        "17"
+        "9"
       ],
       "value_atto": "0",
       "status": "FINALIZED",
@@ -94,35 +95,35 @@
         "agree": 3,
         "idle": 2
       },
-      "created_at": "2026-09-21T12:10:06.687231+00:00",
-      "explorer": "https://explorer-studio.genlayer.com/tx/0xfec5f4ee1e342d813688892e4a7faf490ec72d00f5cef2f4a7c3fd47fc7c978c"
+      "created_at": "2026-09-21T13:25:36.957998+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x7c9fbaf8320b4247ce9a11e3164e07cb37365331a8ecb0b6311a046484b2c481"
     },
     {
-      "tx": "0x9a17b558bb9729f5296e4216516f27d6a9307f12cc127fe1a4cc6cc9e93f7d5d",
-      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
-      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "tx": "0xffcf71d2c5a16a444803f675d73085052021757dce8090cf08f95d6610caefc9",
+      "from": "0x4F0bA2Cf2668920315358675e56ED9391a29BbdF",
+      "to": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
       "method": "close_recon",
       "args": [
-        "17"
+        "9"
       ],
       "value_atto": "0",
       "status": "FINALIZED",
       "consensus": "MAJORITY_AGREE",
       "execution": "SUCCESS",
       "votes": {
-        "agree": 3,
-        "idle": 2
+        "agree": 4,
+        "idle": 1
       },
-      "created_at": "2026-09-21T12:18:34.104708+00:00",
-      "explorer": "https://explorer-studio.genlayer.com/tx/0x9a17b558bb9729f5296e4216516f27d6a9307f12cc127fe1a4cc6cc9e93f7d5d"
+      "created_at": "2026-09-21T13:30:06.967903+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0xffcf71d2c5a16a444803f675d73085052021757dce8090cf08f95d6610caefc9"
     },
     {
-      "tx": "0xd817b1590b6766ef80d24c329b82ded98148ff2e9c258266c4f55e7cc223c745",
-      "from": "0x9B80fEE428bb24FB3169b599b063dBf019368b6A",
-      "to": "0x895c056714414425F308dA6f65fBE4d4eCb8e775",
+      "tx": "0x18b5cae39008d6cd79039e2115827f8560ca6f9723eedfbe8a990603f6ac5e7e",
+      "from": "0x4F0bA2Cf2668920315358675e56ED9391a29BbdF",
+      "to": "0x39C9137F746BfA133Dc04776ffcCF876370D01E8",
       "method": "refund_bond",
       "args": [
-        "17"
+        "9"
       ],
       "value_atto": "0",
       "status": "FINALIZED",
@@ -132,8 +133,8 @@
         "agree": 3,
         "idle": 2
       },
-      "created_at": "2026-09-21T12:19:37.663585+00:00",
-      "explorer": "https://explorer-studio.genlayer.com/tx/0xd817b1590b6766ef80d24c329b82ded98148ff2e9c258266c4f55e7cc223c745"
+      "created_at": "2026-09-21T13:30:35.658806+00:00",
+      "explorer": "https://explorer-studio.genlayer.com/tx/0x18b5cae39008d6cd79039e2115827f8560ca6f9723eedfbe8a990603f6ac5e7e"
     }
   ],
   "outcome": {
@@ -145,7 +146,7 @@
     "refunded_atto": "20000000000000000",
     "results": [
       {
-        "result_id": "17-R0",
+        "result_id": "9-R0",
         "status": "FINALIZED",
         "reconciliation_status": "RESOLVED",
         "state": "2023-10-02",
@@ -156,7 +157,7 @@
             "origin": "python.org",
             "evidence_status": "SUPPORTING",
             "availability": "AVAILABLE",
-            "claim": "Release date: Oct. 2, 2023 This is the stable release of Python 3.12.0",
+            "claim": "Release date: Oct. 2, 2023",
             "freshness": "CURRENT",
             "derived_from": ""
           },
@@ -165,7 +166,7 @@
             "origin": "endoflife.date",
             "evidence_status": "SUPPORTING",
             "availability": "AVAILABLE",
-            "claim": "\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\",\"eol\":\"2028-10-31\"",
+            "claim": "\"cycle\":\"3.12\",\"releaseDate\":\"2023-10-02\"",
             "freshness": "CURRENT",
             "derived_from": ""
           },
@@ -174,7 +175,7 @@
             "origin": "github:olawalter",
             "evidence_status": "CONFLICTING",
             "availability": "AVAILABLE",
-            "claim": "Python 3.12.0 was released on 3 October 2023, according to this digest.",
+            "claim": "Python 3.12.0 was released on 3 October 2023",
             "freshness": "CURRENT",
             "derived_from": ""
           }
@@ -184,12 +185,12 @@
     "history": {
       "items": [
         {
-          "finalized_at": 1789992606,
+          "finalized_at": 1789997136,
           "kind": "OBSERVED",
           "new_state": "2023-10-02",
           "previous_state": "",
-          "recon_id": "17",
-          "result_id": "17-R0"
+          "recon_id": "9",
+          "result_id": "9-R0"
         }
       ],
       "total": 1

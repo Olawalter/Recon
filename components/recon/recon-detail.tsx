@@ -129,7 +129,7 @@ export function ReconDetail({ id }: { id: string }) {
             <LifecyclePanel recon={recon} result={latest} tx={observeTx} txLookup={lookup} />
           </Pane>
           <Pane index="08" title="Bond">
-            <BondPanel recon={recon} refundTx={txs?.refund} txLookup={lookup} />
+            <BondPanel recon={recon} refundTx={txs?.refund} txLookup={lookup} now={now} />
           </Pane>
           <Pane index="09" title="Transaction and contract">
             <dl className="mono grid gap-2 text-[11px] text-muted">

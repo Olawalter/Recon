@@ -94,6 +94,13 @@ describe("bond status", () => {
       .toContain("Refund confirmation unavailable");
   });
 
+  it("does not call a refund minutes old lost while StudioNet's listing catches up", () => {
+    expect(text(renderToStaticMarkup(<BondPanel recon={refunded} txLookup="found" now={5 + 30} />)))
+      .toContain("Looking up the refund transaction");
+    expect(text(renderToStaticMarkup(<BondPanel recon={refunded} txLookup="found" now={5 + 3600} />)))
+      .toContain("Refund confirmation unavailable");
+  });
+
   it("never presents the bond as weighing on the result", () => {
     expect(text(renderToStaticMarkup(<BondPanel recon={recon} txLookup="found" />))).toContain("never influences a result");
   });

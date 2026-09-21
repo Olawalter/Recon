@@ -10,14 +10,19 @@ import { formatGen, formatTime, shortAddress, shortHash } from "@/lib/formatting
  * moves when the refund transaction is final on GenLayer, so "confirmed" is
  * shown only when that transaction's own status says so.
  */
-export function BondPanel({ recon, refundTx, txLookup }: {
+export function BondPanel({ recon, refundTx, txLookup, now }: {
   recon: Recon;
   refundTx?: ChainTx;
   txLookup: "found" | "missing" | "loading" | "failed";
+  /** The browser clock, only to tell a refund too recent to be listed yet from one that cannot be found. */
+  now?: number;
 }) {
   const explorer = configResult.ok ? configResult.config.explorer : "";
   const refunded = recon.bond_status === "REFUNDED";
   const confirmed = refunded && refundTx?.status === "FINALIZED";
+  // StudioNet's transaction listing trails the chain by a little: a refund
+  // minutes old that is not listed yet is still being looked for, not lost
+  const recent = now !== undefined && now - recon.refunded_at < 600;
   return (
     <div className="grid gap-3">
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
@@ -37,8 +42,8 @@ export function BondPanel({ recon, refundTx, txLookup }: {
               ? "Refund confirmed: the refund transaction is final on GenLayer, so the transfer has been sent."
               : refundTx
                 ? `The refund transaction is ${refundTx.status.toLowerCase()} on GenLayer; the GEN moves when it is final.`
-                : txLookup === "loading"
-                  ? "Looking up the refund transaction…"
+                : txLookup === "loading" || recent
+                  ? "Looking up the refund transaction on StudioNet…"
                   : "Refund confirmation unavailable: the refund transaction could not be located on StudioNet."}
           </p>
           {refundTx ? (

@@ -1,8 +1,8 @@
 # RECON demonstration page: a conflicting source
 
 This page is maintained in the RECON repository to demonstrate how RECON
-handles a source that contradicts the others. **Its claim is deliberately
-wrong.** It is not a statement about Python.
+handles a source that contradicts the others. It plays a release-notes digest
+whose date disagrees with the other sources.
 
 Release notes digest
 

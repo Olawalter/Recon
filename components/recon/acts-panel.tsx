@@ -37,7 +37,7 @@ export function ActsPanel({ recon, latest, onChanged }: { recon: Recon; latest?:
       }
     };
     await sender.send({ call: verbCall(act.method, recon.recon_id), reconciled: reconChanged(client, config, recon.recon_id, test),
-                        onSettled: onChanged });
+                        onRecorded: onChanged, onSettled: onChanged });
   };
 
   return (

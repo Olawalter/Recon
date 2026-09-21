@@ -354,6 +354,24 @@ class World:
         self._once("create", run)
         return self.ids
 
+    def observe_until_recorded(self, case, step, attempts=3):
+        """Observe, and observe again if a round ends without a majority. Such a
+        round records nothing (GenLayer marks it UNDETERMINED) and the protocol
+        lets the request be observed again at once. Every such round is kept in
+        the record, with its hash and votes, never hidden."""
+        live = self.live
+        for attempt in range(1, attempts + 1):
+            label = step if attempt == 1 else f"{step} (attempt {attempt})"
+            entry = live.write(live.observer, "observe_recon", self.ids[case], step=label, request=case)
+            assert not entry["refused"], entry
+            if entry["consensus"] == "MAJORITY_AGREE" and entry["status"] in ("ACCEPTED", "FINALIZED"):
+                return entry
+            facts = live.tx_facts(entry["tx"])
+            live.record["requests"][case].setdefault("rounds_without_majority", []).append(
+                {"tx": entry["tx"], "status": entry["status"], "consensus": entry["consensus"], "votes": facts.get("votes")})
+            print(f"    -> no majority ({facts.get('votes')}); nothing was recorded, observing again")
+        raise AssertionError(f"{case}: {attempts} rounds without a majority")
+
     # ── observe ──
     def observed(self):
         self.created()
@@ -361,9 +379,7 @@ class World:
         def run():
             live = self.live
             for case in CASES:
-                entry = live.write(live.observer, "observe_recon", self.ids[case],
-                                   step=f"observe_recon [{case}]", request=case)
-                assert not entry["refused"], entry
+                entry = self.observe_until_recorded(case, f"observe_recon [{case}]")
                 live.record["requests"][case]["observe_tx"] = entry["tx"]
                 live.record["requests"][case]["observe_facts"] = live.tx_facts(entry["tx"])
                 res = self.result(case)
@@ -412,7 +428,7 @@ class World:
             live.write(live.observer, "expire_result", g, step="expire_result [grouped]", request="grouped")
             live.record["requests"]["grouped"]["after_expiry"] = self.request("grouped")
             live.sleep_until(int(first["proposed_at"]) + INTERVAL, why="for the observation interval")
-            entry = live.write(live.observer, "observe_recon", g, step="observe_recon again [grouped]", request="grouped")
+            entry = self.observe_until_recorded("grouped", "observe_recon again [grouped]")
             live.record["requests"]["grouped"]["observe_again_tx"] = entry["tx"]
             live.sleep_until(int(self.result("grouped")["proposed_at"]) + FINALITY_DELAY, why="for finality")
             live.write(live.observer, "finalize_result", g, step="finalize_result again [grouped]", request="grouped")
